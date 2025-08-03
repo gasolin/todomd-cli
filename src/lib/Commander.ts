@@ -1,27 +1,50 @@
 import { TodoManager } from './TodoManager.js';
 import { Task } from '../types/Task.js';
+import fs from 'fs/promises';
+import path from 'path';
 
 export class Commander {
-  private todoManager: TodoManager;
+  private todoDir: string;
+  private todoFile: string | undefined;
+  private doneFile: string | undefined;
 
   constructor(todoDir: string, todoFile?: string, doneFile?: string) {
-    this.todoManager = new TodoManager(todoDir, todoFile, doneFile);
+    this.todoDir = todoDir;
+    this.todoFile = todoFile;
+    this.doneFile = doneFile;
   }
 
   async run(command: string, args: string[]): Promise<string | Task[]> {
-    await this.todoManager.loadTasks();
-    const tasks = this.todoManager.getTasks();
+    let todoManager: TodoManager;
+
+    // Path handling logic
+    try {
+      const stats = await fs.stat(command);
+      let filePath = command;
+      if (stats.isDirectory()) {
+        filePath = path.join(command, 'todo.md');
+      }
+      todoManager = new TodoManager(path.dirname(filePath), path.basename(filePath));
+      command = 'list'; // Default to list command
+      args = [];
+    } catch (error) {
+      // Not a path, use the default todoManager
+      todoManager = new TodoManager(this.todoDir, this.todoFile, this.doneFile);
+    }
+
+    await todoManager.loadTasks();
+    const tasks = todoManager.getTasks();
 
     switch (command) {
       case 'init':
-        await this.todoManager.init();
+        await todoManager.init();
         return 'TodoMD directory initialized';
 
       case 'add':
       case 'a':
         const taskText = args.join(' ');
         if (!taskText) return 'Error: Please provide a task description';
-        await this.todoManager.addTask(taskText);
+        await todoManager.addTask(taskText);
         return 'Task added successfully';
 
       case 'done':
@@ -32,7 +55,7 @@ export class Commander {
         }
         const taskToComplete = tasks[doneId - 1];
         taskToComplete.completed = true;
-        await this.todoManager.updateTask(doneId - 1, taskToComplete);
+        await todoManager.updateTask(doneId - 1, taskToComplete);
         return 'Task completed';
 
       case 'undone':
@@ -43,7 +66,7 @@ export class Commander {
         }
         const taskToUncomplete = tasks[undoneId - 1];
         taskToUncomplete.completed = false;
-        await this.todoManager.updateTask(undoneId - 1, taskToUncomplete);
+        await todoManager.updateTask(undoneId - 1, taskToUncomplete);
         return 'Task marked as incomplete';
 
       case 'delete':
@@ -53,7 +76,7 @@ export class Commander {
         if (isNaN(idToDelete) || !tasks[idToDelete - 1]) {
           return 'Error: Invalid task ID';
         }
-        await this.todoManager.deleteTask(idToDelete - 1);
+        await todoManager.deleteTask(idToDelete - 1);
         return 'Task deleted';
 
       case 'priority':
@@ -64,7 +87,7 @@ export class Commander {
         if (!priority || !/^[A-Z]$/.test(priority)) return 'Error: Priority must be a single uppercase letter';
         const taskToSetPriority = tasks[priId - 1];
         taskToSetPriority.priority = priority;
-        await this.todoManager.updateTask(priId - 1, taskToSetPriority);
+        await todoManager.updateTask(priId - 1, taskToSetPriority);
         return `Priority for task ${priId} set to (${priority})`;
 
       case 'project':
@@ -76,7 +99,7 @@ export class Commander {
         const taskToSetProject = tasks[projId - 1];
         if (!taskToSetProject.projects) taskToSetProject.projects = [];
         taskToSetProject.projects.push(project);
-        await this.todoManager.updateTask(projId - 1, taskToSetProject);
+        await todoManager.updateTask(projId - 1, taskToSetProject);
         return `Project +${project} added to task ${projId}`;
 
       case 'context':
@@ -88,7 +111,7 @@ export class Commander {
         const taskToSetContext = tasks[ctxId - 1];
         if (!taskToSetContext.contexts) taskToSetContext.contexts = [];
         taskToSetContext.contexts.push(context);
-        await this.todoManager.updateTask(ctxId - 1, taskToSetContext);
+        await todoManager.updateTask(ctxId - 1, taskToSetContext);
         return `Context @${context} added to task ${ctxId}`;
 
       case 'due':
@@ -98,7 +121,7 @@ export class Commander {
         if (!dueDate || !/^\d{4}-\d{2}-\d{2}$/.test(dueDate)) return 'Error: Date must be in YYYY-MM-DD format';
         const taskToSetDue = tasks[dueId - 1];
         taskToSetDue.dueDate = dueDate;
-        await this.todoManager.updateTask(dueId - 1, taskToSetDue);
+        await todoManager.updateTask(dueId - 1, taskToSetDue);
         return `Due date for task ${dueId} set to ${dueDate}`;
 
       case 'search':
