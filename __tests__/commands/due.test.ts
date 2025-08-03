@@ -16,9 +16,7 @@ describe('due command', () => {
   })
 
   afterEach(async () => {
-    if (tempDir) {
-      await cleanupTestDirectory(tempDir)
-    }
+    await cleanupTestDirectory(tempDir)
   })
 
   test('should set a due date for a task', async () => {
@@ -31,7 +29,6 @@ describe('due command', () => {
 
     const todoFilePath = path.join(tempDir, 'todo.md')
     const fileContent = await fs.readFile(todoFilePath, 'utf8')
-    // Check for the description and the due date, allowing for other metadata like creation date
     expect(fileContent).toMatch(/A task with a due date.*due:2025-12-31/)
   })
 })

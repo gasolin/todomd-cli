@@ -10,7 +10,7 @@
     "forceConsistentCasingInFileNames": true,
     "declaration": true,
     "jsx": "react-jsx",
-    "moduleResolution": "nodenext",
+    "moduleResolution": "NodeNext",
     "resolveJsonModule": true,
     "allowImportingTsExtensions": false,
     "noEmit": false,

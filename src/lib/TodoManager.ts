@@ -1,7 +1,7 @@
 import fs from 'fs/promises'
 import path from 'path'
-import { Task } from '../types/Task.js'
-import { TodoParser } from './TodoParser.js'
+import { Task } from '../types/Task'
+import { TodoParser } from './TodoParser'
 
 export class TodoManager {
   private todoDir: string

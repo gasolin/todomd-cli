@@ -5,9 +5,9 @@ import meow from 'meow'
 import dotenv from 'dotenv'
 import path from 'path'
 import os from 'os'
-import App from './components/App.js'
+import App from './components/App'
 import { pathToFileURL } from 'url'
-import { ValidCommands } from './types/Commands.js'
+import { ValidCommands } from './types/Commands'
 
 // Load environment variables
 dotenv.config()
@@ -21,8 +21,6 @@ const cli = meow(
   Commands
     list, ls                      List all tasks
     listall, lsa                  List all tasks (including completed and cancelled)
-    listcon, lsc <context>        List tasks by context
-    listpri, lsp <priority>       List tasks by priority
     add, a <task>                 Add a new task
     done, do <id>                 Mark task as completed
     undone, ud <id>               Mark task as incomplete

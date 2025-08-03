@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { Commander } from '../lib/Commander.js'
-import { Task } from '../types/Task.js'
-import { TodoParser } from '../lib/TodoParser.js'
+import { Commander } from '../lib/Commander'
+import { Task } from '../types/Task'
+import { TodoParser } from '../lib/TodoParser'
+import { parseISO, isPast } from 'date-fns'
 
 interface AppProps {
   command: string
@@ -86,7 +87,12 @@ const App: React.FC<AppProps> = ({ command, args, flags, todoDir }) => {
           const taskNumber = String(index + 1).padStart(maxDigits, ' ')
           const numberedTaskLine = `${taskNumber}. ${statusSymbol}${taskDescription}`
 
-          const color = task.completed || task.cancelled ? 'gray' : undefined
+          let color
+          if (task.completed || task.cancelled) {
+            color = 'gray'
+          } else if (task.dueDate && isPast(parseISO(task.dueDate))) {
+            color = 'red'
+          }
 
           return (
             <Text key={index} color={color}>

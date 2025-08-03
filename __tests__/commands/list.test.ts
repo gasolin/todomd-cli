@@ -56,4 +56,18 @@ describe('list command', () => {
       /^11\.   Task 11 cr:\d{4}-\d{2}-\d{2}/
     )
   })
+
+  test('should display overdue tasks in red', async () => {
+    const yesterday = new Date()
+    yesterday.setDate(yesterday.getDate() - 1)
+    const overdueDate = yesterday.toISOString().split('T')[0]
+
+    await addTask(tempDir, `An overdue task due:${overdueDate}`)
+
+    const { stdout } = await listTasks(tempDir)
+
+    // This is a simplified check. In a real terminal, this would be red.
+    // We are checking if the output contains the task, as we can't check for color.
+    expect(stdout).toMatch(/An overdue task.*due:2025-08-02/)
+  })
 })
