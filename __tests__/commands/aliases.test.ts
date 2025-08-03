@@ -53,4 +53,34 @@ describe('Command Aliases', () => {
     const fileContent = await fs.readFile(path.join(tempDir, 'todo.md'), 'utf8');
     expect(fileContent).toContain('- [ ] Task to be undone');
   });
+
+  test('alias "pri" should work for "priority"', async () => {
+    await execPromise(`node ${cliPath} add "A task for priority alias"`, { env: { ...process.env, TODO_DIR: tempDir } });
+    const { stdout } = await execPromise(`node ${cliPath} pri 1 B`, { env: { ...process.env, TODO_DIR: tempDir } });
+    expect(stdout).toContain('Priority for task 1 set to (B)');
+    const fileContent = await fs.readFile(path.join(tempDir, 'todo.md'), 'utf8');
+    expect(fileContent).toContain('(B) A task for priority alias');
+  });
+
+  test('alias "proj" should work for "project"', async () => {
+    await execPromise(`node ${cliPath} add "A task for project alias"`, { env: { ...process.env, TODO_DIR: tempDir } });
+    const { stdout } = await execPromise(`node ${cliPath} proj 1 alias-proj`, { env: { ...process.env, TODO_DIR: tempDir } });
+    expect(stdout).toContain('Project +alias-proj added to task 1');
+    const fileContent = await fs.readFile(path.join(tempDir, 'todo.md'), 'utf8');
+    expect(fileContent).toContain('A task for project alias +alias-proj');
+  });
+
+  test('alias "ctx" should work for "context"', async () => {
+    await execPromise(`node ${cliPath} add "A task for context alias"`, { env: { ...process.env, TODO_DIR: tempDir } });
+    const { stdout } = await execPromise(`node ${cliPath} ctx 1 alias-ctx`, { env: { ...process.env, TODO_DIR: tempDir } });
+    expect(stdout).toContain('Context @alias-ctx added to task 1');
+    const fileContent = await fs.readFile(path.join(tempDir, 'todo.md'), 'utf8');
+    expect(fileContent).toContain('A task for context alias @alias-ctx');
+  });
+
+  test('alias "ls" should work for "list"', async () => {
+    await execPromise(`node ${cliPath} add "A task for the ls alias"`, { env: { ...process.env, TODO_DIR: tempDir } });
+    const { stdout } = await execPromise(`node ${cliPath} ls`, { env: { ...process.env, TODO_DIR: tempDir } });
+    expect(stdout).toContain('A task for the ls alias');
+  });
 });
