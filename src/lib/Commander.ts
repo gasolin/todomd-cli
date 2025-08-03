@@ -36,6 +36,7 @@ export class Commander {
         return 'Task completed';
 
       case 'undone':
+      case 'ud':
         const undoneId = parseInt(args[0]);
         if (isNaN(undoneId) || !tasks[undoneId - 1]) {
           return 'Error: Invalid task ID';

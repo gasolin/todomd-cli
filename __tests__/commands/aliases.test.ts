@@ -36,4 +36,21 @@ describe('Command Aliases', () => {
     const fileContent = await fs.readFile(path.join(tempDir, 'todo.md'), 'utf8');
     expect(fileContent).not.toContain('Task to be deleted');
   });
+
+  test('alias "rm" should work for "delete"', async () => {
+    await execPromise(`node ${cliPath} add "Another task to be removed"`, { env: { ...process.env, TODO_DIR: tempDir } });
+    const { stdout } = await execPromise(`node ${cliPath} rm 1`, { env: { ...process.env, TODO_DIR: tempDir } });
+    expect(stdout).toContain('Task deleted');
+    const fileContent = await fs.readFile(path.join(tempDir, 'todo.md'), 'utf8');
+    expect(fileContent).not.toContain('Another task to be removed');
+  });
+
+  test('alias "ud" should work for "undone"', async () => {
+    await execPromise(`node ${cliPath} add "Task to be undone"`, { env: { ...process.env, TODO_DIR: tempDir } });
+    await execPromise(`node ${cliPath} done 1`, { env: { ...process.env, TODO_DIR: tempDir } });
+    const { stdout } = await execPromise(`node ${cliPath} ud 1`, { env: { ...process.env, TODO_DIR: tempDir } });
+    expect(stdout).toContain('Task marked as incomplete');
+    const fileContent = await fs.readFile(path.join(tempDir, 'todo.md'), 'utf8');
+    expect(fileContent).toContain('- [ ] Task to be undone');
+  });
 });
