@@ -15,6 +15,7 @@ const cli = meow(
   `
   Usage
     $ todomd <command> [options]
+    $ todomd [path/to/your/todo.md]
 
   Commands
     list, ls                      List all tasks

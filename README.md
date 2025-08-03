@@ -81,6 +81,18 @@ todomd list
 todomd done 1
 ```
 
+### Direct File/Directory Usage
+
+You can also work with specific `todo.md` files directly by providing a path:
+
+```bash
+# List tasks from a specific file
+todomd path/to/another/todo.md
+
+# List tasks from todo.md in a specific directory
+todomd path/to/a/project/
+```
+
 ## Commands
 
 ### Basic Operations

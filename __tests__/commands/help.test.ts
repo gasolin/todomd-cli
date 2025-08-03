@@ -6,6 +6,7 @@ describe('help command', () => {
 
     // Check for key sections in the help output
     expect(stdout).toContain('Usage');
+    expect(stdout).toContain('$ todomd [path/to/your/todo.md]');
     expect(stdout).toContain('Commands');
     expect(stdout).toContain('Options');
     expect(stdout).toContain('Examples');
