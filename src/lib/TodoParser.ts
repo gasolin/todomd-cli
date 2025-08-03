@@ -9,10 +9,8 @@ export class TodoParser {
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
       
-      // Check if this is a task line (starts with - [ ], - [x], or - [-])
       if (this.isTaskLine(line)) {
         const task = this.parseTaskLine(line, this.getIndentLevel(line), currentId++);
-        task.rawLine = line;
         tasks.push(task);
       }
     }
@@ -65,19 +63,19 @@ export class TodoParser {
     }
 
     // Parse projects (+project)
-    const projectMatches = remainingContent.match(/\+(\w+)/g);
+    const projectMatches = remainingContent.match(/\+([\w-]+)/g);
     if (projectMatches) {
       task.projects = projectMatches.map(match => match.substring(1));
     }
 
     // Parse contexts (@context)
-    const contextMatches = remainingContent.match(/@(\w+)/g);
+    const contextMatches = remainingContent.match(/@([\w-]+)/g);
     if (contextMatches) {
       task.contexts = contextMatches.map(match => match.substring(1));
     }
 
     // Parse tags (#tag)
-    const tagMatches = remainingContent.match(/#(\w+)/g);
+    const tagMatches = remainingContent.match(/#([\w-]+)/g);
     if (tagMatches) {
       task.tags = tagMatches.map(match => match.substring(1));
     }
@@ -113,9 +111,9 @@ export class TodoParser {
     // Extract the main description (remove metadata)
     let description = remainingContent;
     description = description.replace(/\([A-Z]\)/g, '').trim(); // Remove priority
-    description = description.replace(/\+\w+/g, '').trim(); // Remove projects
-    description = description.replace(/@\w+/g, '').trim(); // Remove contexts
-    description = description.replace(/#\w+/g, '').trim(); // Remove tags
+    description = description.replace(/\+[\w-]+/g, '').trim(); // Remove projects
+    description = description.replace(/@[\w-]+/g, '').trim(); // Remove contexts
+    description = description.replace(/#[\w-]+/g, '').trim(); // Remove tags
     description = description.replace(/\w+:[^\s]+/g, '').trim(); // Remove key:value pairs
     description = description.replace(/\s+/g, ' ').trim(); // Normalize whitespace
 

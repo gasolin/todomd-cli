@@ -13,7 +13,8 @@
     "moduleResolution": "nodenext",
     "resolveJsonModule": true,
     "allowImportingTsExtensions": false,
-    "noEmit": false
+    "noEmit": false,
+    "isolatedModules": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]

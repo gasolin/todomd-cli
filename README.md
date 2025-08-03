@@ -11,6 +11,22 @@ A command-line tool for managing todomd format files, inspired by todo.txt-cli b
 - 🔧 **Configurable**: Environment variable support for custom directories
 - 🎨 **Beautiful CLI**: Built with Ink for a modern terminal experience
 
+## Feature Status
+
+- [x] `init` - Initialize the todo directory
+- [x] `add <task>` - Add a new task
+- [x] `list` / `ls` - List all tasks
+- [x] `done <id>` - Mark a task as completed
+- [ ] `undone <id>` - Mark a task as not completed
+- [x] `delete <id>` / `rm <id>` - Delete a task
+- [ ] `edit <id>` - Edit a task interactively
+- [x] `priority <id> <priority>` - Set task priority
+- [x] `project <id> <project>` - Add a project to a task
+- [x] `context <id> <context>` - Add a context to a task
+- [x] `due <id> <date>` - Set a due date for a task
+- [x] `search <term>` - Search for tasks
+- [ ] `archive` - Move completed tasks to done.md
+
 ## Installation
 
 ```bash

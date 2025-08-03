@@ -1,4 +1,4 @@
-import fs from 'fs/promises';
+const fs = require('fs/promises');
 import path from 'path';
 import { Task } from '../types/Task.js';
 import { TodoParser } from './TodoParser.js';
@@ -8,6 +8,7 @@ export class TodoManager {
   private todoFile: string;
   private doneFile: string;
   private parser: TodoParser;
+  private tasks: Task[] = [];
 
   constructor(todoDir: string, todoFile: string = 'todo.md', doneFile: string = 'done.md') {
     this.todoDir = todoDir;
@@ -16,7 +17,12 @@ export class TodoManager {
     this.parser = new TodoParser();
   }
 
-  async ensureDir(): Promise<void> {
+  async init(): Promise<void> {
+    await this.ensureDir();
+    await this.ensureFiles();
+  }
+
+  private async ensureDir(): Promise<void> {
     try {
       await fs.access(this.todoDir);
     } catch {
@@ -24,9 +30,7 @@ export class TodoManager {
     }
   }
 
-  async ensureFiles(): Promise<void> {
-    await this.ensureDir();
-    
+  private async ensureFiles(): Promise<void> {
     // Create todo.md if it doesn't exist
     try {
       await fs.access(this.todoFile);
@@ -59,21 +63,29 @@ export class TodoManager {
   }
 
   async loadTasks(): Promise<Task[]> {
-    await this.ensureFiles();
+    await this.init();
     
     try {
       const content = await fs.readFile(this.todoFile, 'utf8');
-      return this.parser.parse(content);
+      this.tasks = this.parser.parse(content);
+      return this.tasks;
     } catch (error) {
+      // If file doesn't exist, return empty array
+      if (error instanceof Error && 'code' in error && error.code === 'ENOENT') {
+        this.tasks = [];
+        return [];
+      }
       throw new Error(`Failed to load tasks: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
-  async saveTasks(tasks: Task[]): Promise<void> {
-    await this.ensureFiles();
-    
+  getTasks(): Task[] {
+    return this.tasks;
+  }
+
+  async saveTasks(): Promise<void> {
     try {
-      const content = this.parser.serialize(tasks);
+      const content = this.parser.serialize(this.tasks);
       await fs.writeFile(this.todoFile, content, 'utf8');
     } catch (error) {
       throw new Error(`Failed to save tasks: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -81,61 +93,56 @@ export class TodoManager {
   }
 
   async addTask(taskText: string): Promise<void> {
-    const tasks = await this.loadTasks();
-    const newTask = this.parser.parseTaskLine(taskText, 0, tasks.length);
+    const formattedTaskText = `- [ ] ${taskText}`;
+    const newTask = this.parser.parseTaskLine(formattedTaskText, 0, this.tasks.length);
     
     // Set creation date if not provided
     if (!newTask.creationDate) {
       newTask.creationDate = new Date().toISOString().split('T')[0];
     }
     
-    tasks.push(newTask);
-    await this.saveTasks(tasks);
+    this.tasks.push(newTask);
+    await this.saveTasks();
   }
 
   async updateTask(index: number, updatedTask: Task): Promise<void> {
-    const tasks = await this.loadTasks();
-    
-    if (index < 0 || index >= tasks.length) {
+    if (index < 0 || index >= this.tasks.length) {
       throw new Error('Invalid task index');
     }
 
     // Set completion date if task is being marked as completed
-    if (updatedTask.completed && !tasks[index].completed) {
+    if (updatedTask.completed && !this.tasks[index].completed) {
       updatedTask.completionDate = new Date().toISOString().split('T')[0];
     }
     
     // Remove completion date if task is being marked as incomplete
-    if (!updatedTask.completed && tasks[index].completed) {
+    if (!updatedTask.completed && this.tasks[index].completed) {
       updatedTask.completionDate = undefined;
     }
 
-    tasks[index] = { ...tasks[index], ...updatedTask };
-    await this.saveTasks(tasks);
+    this.tasks[index] = { ...this.tasks[index], ...updatedTask };
+    await this.saveTasks();
   }
 
   async deleteTask(index: number): Promise<void> {
-    const tasks = await this.loadTasks();
-    
-    if (index < 0 || index >= tasks.length) {
+    if (index < 0 || index >= this.tasks.length) {
       throw new Error('Invalid task index');
     }
 
-    tasks.splice(index, 1);
-    await this.saveTasks(tasks);
+    this.tasks.splice(index, 1);
+    await this.saveTasks();
   }
 
   async moveCompletedTasks(): Promise<void> {
-    const tasks = await this.loadTasks();
-    const completedTasks = tasks.filter(task => task.completed);
-    const incompleteTasks = tasks.filter(task => !task.completed);
+    const completedTasks = this.tasks.filter(task => task.completed);
+    const incompleteTasks = this.tasks.filter(task => !task.completed);
 
     if (completedTasks.length === 0) {
       return;
     }
 
-    // Save incomplete tasks to todo.md
-    await this.saveTasks(incompleteTasks);
+    this.tasks = incompleteTasks;
+    await this.saveTasks();
 
     // Append completed tasks to done.md
     try {

@@ -10,24 +10,34 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "dev": "ts-node src/index.ts",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "test": "jest"
   },
-  "keywords": ["todo", "todomd", "markdown", "cli", "task-management"],
+  "keywords": [
+    "todo",
+    "todomd",
+    "markdown",
+    "cli",
+    "task-management"
+  ],
   "author": "Your Name",
   "license": "MIT",
   "dependencies": {
-    "ink": "^6.1.0",
-    "react": "^19.1.1",
-    "meow": "^13.2.0",
-    "dotenv": "^17.2.1",
     "chalk": "^5.4.1",
-    "date-fns": "^4.1.0"
+    "date-fns": "^4.1.0",
+    "dotenv": "^17.2.1",
+    "ink": "^6.1.0",
+    "meow": "^13.2.0",
+    "react": "^19.1.1"
   },
   "devDependencies": {
+    "@types/jest": "^30.0.0",
     "@types/node": "^24.1.0",
     "@types/react": "^19.1.9",
-    "typescript": "^5.9.2",
-    "ts-node": "^10.9.2"
+    "jest": "^30.0.5",
+    "ts-jest": "^29.4.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
   },
   "engines": {
     "node": ">=18.0.0"
