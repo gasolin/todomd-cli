@@ -30,7 +30,7 @@ A command-line tool for managing todomd format files, inspired by todo.txt-cli b
 ## Installation
 
 ```bash
-npm install -g todomd-cli
+npm install -g @gasolin/todomd-cli
 ```
 
 Or clone and build locally:
