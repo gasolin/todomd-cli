@@ -164,6 +164,14 @@ export class Commander {
         if (filteredByContext.length === 0) return `No tasks found for context "@${contextFilter}"`;
         return filteredByContext;
 
+      case ValidCommands.ListPri:
+      case ValidCommands.ListPriAlias:
+        const priorityFilter = effectiveArgs[0];
+        if (!priorityFilter) return 'Error: Please provide a priority';
+        const filteredByPriority = tasks.filter(t => t.priority === priorityFilter);
+        if (filteredByPriority.length === 0) return `No tasks found for priority "(${priorityFilter})"`;
+        return filteredByPriority;
+
       case ValidCommands.ListAll:
       case ValidCommands.ListAllAlias:
         return tasks;

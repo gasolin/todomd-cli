@@ -99,4 +99,10 @@ describe('Command Aliases', () => {
     const { stdout } = await execPromise(`node ${cliPath} lsc work`, { env: { ...process.env, TODO_DIR: tempDir } });
     expect(stdout).toContain('A task for lsc @work');
   });
+
+  test('alias "lsp" should work for "listpri"', async () => {
+    await execPromise(`node ${cliPath} add "(A) A task for lsp"`, { env: { ...process.env, TODO_DIR: tempDir } });
+    const { stdout } = await execPromise(`node ${cliPath} lsp A`, { env: { ...process.env, TODO_DIR: tempDir } });
+    expect(stdout).toContain('(A) A task for lsp');
+  });
 });
