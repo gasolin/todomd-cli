@@ -20,16 +20,24 @@ export class Commander {
     let effectiveArgs = args;
 
     // Path handling logic
+    let isPath = false;
     try {
-      const stats = await fs.stat(command);
+      await fs.stat(command);
+      isPath = true;
+    } catch (error) {
+      // Not a path
+    }
+
+    if (isPath) {
       let filePath = command;
+      const stats = await fs.stat(command);
       if (stats.isDirectory()) {
         filePath = path.join(command, 'todo.md');
       }
       todoManager = new TodoManager(path.dirname(filePath), path.basename(filePath));
       effectiveCommand = args[0] || 'list'; // Use the next arg as command, or default to list
       effectiveArgs = args.slice(1);
-    } catch (error) {
+    } else {
       // Not a path, use the default todoManager
       todoManager = new TodoManager(this.todoDir, this.todoFile, this.doneFile);
     }
@@ -120,15 +128,22 @@ export class Commander {
         await todoManager.updateTask(ctxId - 1, taskToSetContext);
         return `Context @${context} added to task ${ctxId}`;
 
-      case 'due':
-        const dueId = parseInt(effectiveArgs[0]);
-        const dueDate = effectiveArgs[1];
-        if (isNaN(dueId) || !tasks[dueId - 1]) return 'Error: Invalid task ID';
-        if (!dueDate || !/^\d{4}-\d{2}-\d{2}$/.test(dueDate)) return 'Error: Date must be in YYYY-MM-DD format';
-        const taskToSetDue = tasks[dueId - 1];
-        taskToSetDue.dueDate = dueDate;
-        await todoManager.updateTask(dueId - 1, taskToSetDue);
-        return `Due date for task ${dueId} set to ${dueDate}`;
+      case 'due': {
+        const id = parseInt(effectiveArgs[0]);
+        const date = effectiveArgs[1];
+
+        if (isNaN(id) || !tasks[id - 1]) {
+          return 'Error: Invalid task ID';
+        }
+        if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+          return 'Error: Date must be in YYYY-MM-DD format';
+        }
+
+        const taskToUpdate = tasks[id - 1];
+        taskToUpdate.dueDate = date;
+        await todoManager.updateTask(id - 1, taskToUpdate);
+        return `Due date for task ${id} set to ${date}`;
+      }
 
       case 'search':
         const searchTerm = effectiveArgs.join(' ');
@@ -139,8 +154,10 @@ export class Commander {
 
       case 'list':
       case 'ls':
-      default:
         return tasks;
+
+      default:
+        return `Error: Unknown command "${effectiveCommand}".\nRun 'todomd --help' to see a list of available commands.`;
     }
   }
 }
