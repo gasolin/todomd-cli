@@ -1,4 +1,4 @@
-# TodoMD CLI
+# todomd CLI
 
 A command-line tool for managing todomd format files, inspired by todo.txt-cli but designed specifically for the todomd specification that combines Markdown with todo.txt features.
 
@@ -14,15 +14,15 @@ A command-line tool for managing todomd format files, inspired by todo.txt-cli b
 ## Feature Status
 
 - [x] `init` - Initialize the todo directory
-- [x] `add <task>` - Add a new task
-- [x] `list` / `ls` - List all tasks
-- [x] `done <id>` - Mark a task as completed
-- [ ] `undone <id>` - Mark a task as not completed
-- [x] `delete <id>` / `rm <id>` - Delete a task
+- [x] `add, a <task>` - Add a new task
+- [x] `list, ls` - List all tasks
+- [x] `done, do <id>` - Mark a task as completed
+- [x] `undone, ud <id>` - Mark task as incomplete
+- [x] `delete, rm, del <id>` - Delete a task
 - [ ] `edit <id>` - Edit a task interactively
-- [x] `priority <id> <priority>` - Set task priority
-- [x] `project <id> <project>` - Add a project to a task
-- [x] `context <id> <context>` - Add a context to a task
+- [x] `priority, pri <id> <priority>` - Set task priority
+- [x] `project, proj <id> <project>` - Add a project to a task
+- [x] `context, ctx <id> <context>` - Add a context to a task
 - [x] `due <id> <date>` - Set a due date for a task
 - [x] `search <term>` - Search for tasks
 - [ ] `archive` - Move completed tasks to done.md
@@ -30,13 +30,15 @@ A command-line tool for managing todomd format files, inspired by todo.txt-cli b
 ## Installation
 
 ```bash
-npm install -g todomd-cli
+npm install -g todomd
 ```
+
+Or run with npx: `npx todomd`
 
 Or clone and build locally:
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/gasolin/todomd-cli.git
 cd todomd-cli
 npm install
 npm run build
@@ -83,18 +85,18 @@ todomd done 1
 
 ### Basic Operations
 
-- `todomd list` or `todomd ls` - List all tasks
-- `todomd add <task>` - Add a new task
-- `todomd done <id>` - Mark task as completed
-- `todomd undone <id>` - Mark task as incomplete
-- `todomd delete <id>` or `todomd rm <id>` - Delete a task
+- `todomd list, ls` - List all tasks
+- `todomd add, a <task>` - Add a new task
+- `todomd done, do <id>` - Mark task as completed
+- `todomd undone, ud <id>` - Mark task as incomplete
+- `todomd delete, rm, del <id>` - Delete a task
 
 ### Task Management
 
 - `todomd edit <id>` - Edit a task interactively
-- `todomd priority <id> <priority>` - Set task priority (A-Z)
-- `todomd project <id> <project>` - Add project to task
-- `todomd context <id> <context>` - Add context to task
+- `todomd priority, pri <id> <priority>` - Set task priority (A-Z)
+- `todomd project, proj <id> <project>` - Add project to task
+- `todomd context, ctx <id> <context>` - Add context to task
 - `todomd due <id> <date>` - Set due date (YYYY-MM-DD format)
 
 ### Search and Filter
@@ -184,7 +186,7 @@ Since TodoMD files are standard Markdown, they work with:
 
 ```bash
 # Clone the repository
-git clone <repository-url>
+git clone https://github.com/gasolin/todomd-cli.git
 cd todomd-cli
 
 # Install dependencies
