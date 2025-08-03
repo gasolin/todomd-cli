@@ -39,9 +39,6 @@ const cli = meow(
   Examples
     $ todomd add "Buy groceries @home +personal"
     $ todomd done 1
-    $ todomd list
-    $ todomd priority 1 A
-    $ todomd search "groceries"
   `,
   {
     importMeta: { url: pathToFileURL(__filename).href },
