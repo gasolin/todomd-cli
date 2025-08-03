@@ -18,10 +18,10 @@ const cli = meow(
 
   Commands
     list, ls                      List all tasks
-    add <task>                    Add a new task
-    done <id>                     Mark task as completed
+    add, a <task>                 Add a new task
+    done, do <id>                 Mark task as completed
     undone <id>                   Mark task as incomplete
-    delete, rm <id>               Delete a task
+    delete, rm, del <id>          Delete a task
     edit <id>                     Edit a task
     priority, pri <id> <priority> Set task priority
     project, proj <task> <project> Add project to task

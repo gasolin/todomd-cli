@@ -11,7 +11,7 @@ describe('help command', () => {
     expect(stdout).toContain('Examples');
     
     // Check for a few specific commands to ensure the list is present
-    expect(stdout).toContain('add <task>');
+    expect(stdout).toContain('add, a <task>');
     expect(stdout).toContain('list, ls');
   });
 });

@@ -18,25 +18,36 @@ export class Commander {
         return 'TodoMD directory initialized';
 
       case 'add':
+      case 'a':
         const taskText = args.join(' ');
         if (!taskText) return 'Error: Please provide a task description';
         await this.todoManager.addTask(taskText);
         return 'Task added successfully';
 
       case 'done':
-      case 'undone':
-        const taskId = parseInt(args[0]);
-        const completed = command === 'done';
-        if (isNaN(taskId) || !tasks[taskId - 1]) {
+      case 'do':
+        const doneId = parseInt(args[0]);
+        if (isNaN(doneId) || !tasks[doneId - 1]) {
           return 'Error: Invalid task ID';
         }
-        const taskToToggle = tasks[taskId - 1];
-        taskToToggle.completed = completed;
-        await this.todoManager.updateTask(taskId - 1, taskToToggle);
-        return completed ? 'Task completed' : 'Task marked as incomplete';
+        const taskToComplete = tasks[doneId - 1];
+        taskToComplete.completed = true;
+        await this.todoManager.updateTask(doneId - 1, taskToComplete);
+        return 'Task completed';
+
+      case 'undone':
+        const undoneId = parseInt(args[0]);
+        if (isNaN(undoneId) || !tasks[undoneId - 1]) {
+          return 'Error: Invalid task ID';
+        }
+        const taskToUncomplete = tasks[undoneId - 1];
+        taskToUncomplete.completed = false;
+        await this.todoManager.updateTask(undoneId - 1, taskToUncomplete);
+        return 'Task marked as incomplete';
 
       case 'delete':
       case 'rm':
+      case 'del':
         const idToDelete = parseInt(args[0]);
         if (isNaN(idToDelete) || !tasks[idToDelete - 1]) {
           return 'Error: Invalid task ID';
