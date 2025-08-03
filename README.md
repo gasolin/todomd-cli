@@ -60,11 +60,13 @@ echo "TODO_DIR=/path/to/your/todos" > .env
 ## Quick Start
 
 1. Initialize a new todomd directory:
+
 ```bash
 todomd init
 ```
 
 2. Add some tasks:
+
 ```bash
 todomd add "Buy groceries @home +personal due:2025-08-10"
 todomd add "(A) Important meeting preparation @office +work"
@@ -72,11 +74,13 @@ todomd add "Call dentist for appointment"
 ```
 
 3. List your tasks:
+
 ```bash
 todomd list
 ```
 
 4. Mark tasks as complete:
+
 ```bash
 todomd done 1
 ```

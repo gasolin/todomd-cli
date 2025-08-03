@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 
-import React from 'react';
-import meow from 'meow';
-import dotenv from 'dotenv';
-import path from 'path';
-import os from 'os';
-import App from './components/App.js';
-import { pathToFileURL } from 'url';
+import React from 'react'
+import meow from 'meow'
+import dotenv from 'dotenv'
+import path from 'path'
+import os from 'os'
+import App from './components/App.js'
+import { pathToFileURL } from 'url'
 
 // Load environment variables
-dotenv.config();
+dotenv.config()
 
 const cli = meow(
   `
@@ -45,23 +45,23 @@ const cli = meow(
     importMeta: { url: pathToFileURL(__filename).href },
     flags: {
       file: { type: 'string', shortFlag: 'f' },
-      doneFile: { type: 'string' },
-    },
+      doneFile: { type: 'string' }
+    }
   } as any
-);
+)
 
-const todoDir = process.env.TODO_DIR || path.join(os.homedir(), '.todomd');
+const todoDir = process.env.TODO_DIR || path.join(os.homedir(), '.todomd')
 
 async function run() {
-  const { render } = await import('ink');
+  const { render } = await import('ink')
   render(
     React.createElement(App, {
       command: cli.input[0] || 'list',
       args: cli.input.slice(1),
       flags: cli.flags,
-      todoDir: todoDir,
+      todoDir: todoDir
     })
-  );
+  )
 }
 
-run();
+run()

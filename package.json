@@ -14,7 +14,8 @@
     "start": "node dist/index.js",
     "dev": "ts-node src/index.ts",
     "prepare": "npm run build",
-    "test": "jest"
+    "test": "jest",
+    "format": "prettier --write ."
   },
   "keywords": [
     "todo",
@@ -46,11 +47,14 @@
     "@types/node": "^24.1.0",
     "@types/react": "^19.1.9",
     "jest": "^30.0.5",
+    "prettier": "^3.6.2",
+    "prettier-config-standard": "^7.0.0",
     "ts-jest": "^29.4.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.2"
   },
   "engines": {
     "node": ">=18.0.0"
-  }
+  },
+  "prettier": "prettier-config-standard"
 }
