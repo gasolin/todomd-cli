@@ -60,6 +60,8 @@ const App: React.FC<AppProps> = ({ command, args, flags, todoDir }) => {
       return <Text>No tasks found.</Text>;
     }
     
+    const maxDigits = String(output.length).length;
+
     return (
       <Box flexDirection="column">
         {output.map((task, index) => {
@@ -67,7 +69,8 @@ const App: React.FC<AppProps> = ({ command, args, flags, todoDir }) => {
           let description = task.description;
           if (task.priority) description = `(${task.priority}) ${description}`;
           
-          const taskLine = `${index + 1}. ${status} ${description}`;
+          const taskNumber = String(index + 1).padStart(maxDigits, ' ');
+          const taskLine = `${taskNumber}. ${status} ${description}`;
           
           return (
             <Text key={index} color={task.completed ? 'gray' : undefined}>
