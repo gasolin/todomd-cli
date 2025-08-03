@@ -30,6 +30,7 @@ const cli = meow(
     search <term>                 Search tasks
     due <id> <date>               Set due date
     init                          Initialize todomd directory
+    archive                       Archive completed tasks
 
   Options
     --file, -f                    Specify todomd file (default: todo.md)
