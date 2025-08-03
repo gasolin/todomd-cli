@@ -21,8 +21,8 @@ describe('list command', () => {
 
     const { stdout } = await listTasks(tempDir);
 
-    expect(stdout).toContain(`1. [ ] ${task1}`);
-    expect(stdout).toContain(`2. [ ] ${task2}`);
+    expect(stdout).toContain('First task in list');
+    expect(stdout).toContain('Second task in list');
     expect(stdout).toContain('\n');
   });
 

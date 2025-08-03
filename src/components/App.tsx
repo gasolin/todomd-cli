@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Commander } from '../lib/Commander.js';
+import { Task } from '../types/Task.js';
 
 interface AppProps {
   command: string;
@@ -12,7 +13,7 @@ type Status = 'loading' | 'success' | 'error';
 
 const App: React.FC<AppProps> = ({ command, args, flags, todoDir }) => {
   const [status, setStatus] = useState<Status>('loading');
-  const [output, setOutput] = useState<string>('');
+  const [output, setOutput] = useState<string | Task[] | null>(null);
   const [Ink, setInk] = useState<any>(null);
 
   useEffect(() => {
@@ -46,17 +47,39 @@ const App: React.FC<AppProps> = ({ command, args, flags, todoDir }) => {
   }
 
   const { Text, Box } = Ink;
-  const isListCommand = command === 'list' || command === 'ls';
-  const successColor = isListCommand ? undefined : 'green'; // Use default color for list command
 
-  return (
-    <Box flexDirection="column" paddingY={1}>
-      {status === 'error'
-        ? <Text color="red">{output}</Text>
-        : output.split('\n').map((line, i) => <Text key={i} color={successColor}>{line}</Text>)
-      }
-    </Box>
-  );
+  // Handle string output for messages
+  if (typeof output === 'string') {
+    const color = status === 'error' ? 'red' : 'green';
+    return <Text color={color}>{output}</Text>;
+  }
+
+  // Handle Task[] output for lists
+  if (Array.isArray(output)) {
+    if (output.length === 0) {
+      return <Text>No tasks found.</Text>;
+    }
+    
+    return (
+      <Box flexDirection="column">
+        {output.map((task, index) => {
+          const status = task.completed ? '[x]' : (task.cancelled ? '[-]' : '[ ]');
+          let description = task.description;
+          if (task.priority) description = `(${task.priority}) ${description}`;
+          
+          const taskLine = `${index + 1}. ${status} ${description}`;
+          
+          return (
+            <Text key={index} color={task.completed ? 'gray' : undefined}>
+              {taskLine}
+            </Text>
+          );
+        })}
+      </Box>
+    );
+  }
+
+  return <Text color="red">Invalid output type.</Text>;
 };
 
 export default App;

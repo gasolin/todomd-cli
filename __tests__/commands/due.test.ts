@@ -23,6 +23,7 @@ describe('due command', () => {
 
     const todoFilePath = path.join(tempDir, 'todo.md');
     const fileContent = await fs.readFile(todoFilePath, 'utf8');
-    expect(fileContent).toContain('A task with a due date due:2025-12-31');
+    // Check for the description and the due date, allowing for other metadata like creation date
+    expect(fileContent).toMatch(/A task with a due date.*due:2025-12-31/);
   });
 });

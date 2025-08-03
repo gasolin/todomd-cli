@@ -1,4 +1,5 @@
 import { TodoManager } from './TodoManager.js';
+import { Task } from '../types/Task.js';
 
 export class Commander {
   private todoManager: TodoManager;
@@ -7,7 +8,7 @@ export class Commander {
     this.todoManager = new TodoManager(todoDir, todoFile, doneFile);
   }
 
-  async run(command: string, args: string[]): Promise<string> {
+  async run(command: string, args: string[]): Promise<string | Task[]> {
     await this.todoManager.loadTasks();
     const tasks = this.todoManager.getTasks();
 
@@ -93,26 +94,12 @@ export class Commander {
         if (!searchTerm) return 'Error: Please provide a search term';
         const filteredTasks = tasks.filter(t => t.description.toLowerCase().includes(searchTerm.toLowerCase()));
         if (filteredTasks.length === 0) return `No tasks found matching "${searchTerm}"`;
-        // For search, we DO want to return the list of tasks
-        return filteredTasks.map(task => {
-            const status = task.completed ? '[x]' : (task.cancelled ? '[-]' : '[ ]');
-            let description = task.description;
-            if (task.priority) description = `(${task.priority}) ${description}`;
-            return `${task.id + 1}. ${status} ${description}`; // Use task.id + 1 for consistency
-        }).join('\n');
+        return filteredTasks;
 
       case 'list':
       case 'ls':
       default:
-        if (tasks.length === 0) {
-          return 'No tasks found.';
-        }
-        return tasks.map((task, index) => {
-            const status = task.completed ? '[x]' : (task.cancelled ? '[-]' : '[ ]');
-            let description = task.description;
-            if (task.priority) description = `(${task.priority}) ${description}`;
-            return `${index + 1}. ${status} ${description}`;
-        }).join('\n');
+        return tasks;
     }
   }
 }
