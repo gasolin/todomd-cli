@@ -16,6 +16,7 @@ A command-line tool for managing todomd format files, inspired by todo.txt-cli b
 - [x] `init` - Initialize the todo directory
 - [x] `add, a <task>` - Add a new task
 - [x] `list, ls` - List all tasks
+- [x] `listall` - List all tasks (including completed and cancelled)
 - [x] `done, do <id>` - Mark a task as completed
 - [x] `undone, ud <id>` - Mark task as incomplete
 - [x] `delete, rm, del <id>` - Delete a task

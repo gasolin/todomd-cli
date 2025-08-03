@@ -45,6 +45,12 @@ export class Commander {
     await todoManager.loadTasks();
     const tasks = todoManager.getTasks();
 
+    const validCommands = ['init', 'add', 'a', 'done', 'do', 'undone', 'ud', 'delete', 'rm', 'del', 'archive', 'priority', 'pri', 'project', 'proj', 'context', 'ctx', 'due', 'search', 'list', 'ls', 'listall', 'lsa'];
+
+    if (!validCommands.includes(effectiveCommand)) {
+      return `Error: Unknown command "${effectiveCommand}".\nRun 'todomd --help' to see a list of available commands.`;
+    }
+
     switch (effectiveCommand) {
       case 'init':
         await todoManager.init();
@@ -152,12 +158,14 @@ export class Commander {
         if (filteredTasks.length === 0) return `No tasks found matching "${searchTerm}"`;
         return filteredTasks;
 
-      case 'list':
-      case 'ls':
+      case 'listall':
+      case 'lsa':
         return tasks;
 
+      case 'list':
+      case 'ls':
       default:
-        return `Error: Unknown command "${effectiveCommand}".\nRun 'todomd --help' to see a list of available commands.`;
+        return tasks.filter(task => !task.completed && !task.cancelled);
     }
   }
 }
