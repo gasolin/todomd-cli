@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Commander } from '../lib/Commander.js';
 import { Task } from '../types/Task.js';
+import { TodoParser } from '../lib/TodoParser.js';
 
 interface AppProps {
   command: string;
@@ -15,6 +16,7 @@ const App: React.FC<AppProps> = ({ command, args, flags, todoDir }) => {
   const [status, setStatus] = useState<Status>('loading');
   const [output, setOutput] = useState<string | Task[] | null>(null);
   const [Ink, setInk] = useState<any>(null);
+  const [parser] = useState(() => new TodoParser());
 
   useEffect(() => {
     const loadInk = async () => {
@@ -64,22 +66,31 @@ const App: React.FC<AppProps> = ({ command, args, flags, todoDir }) => {
 
     return (
       <Box flexDirection="column">
-        {output.map((task, index) => {
-          const status = task.completed ? '[x]' : (task.cancelled ? '[-]' : '[ ]');
-          let description = task.description;
-          if (task.priority) description = `(${task.priority}) ${description}`;
-          
-          const taskNumber = String(index + 1).padStart(maxDigits, ' ');
-          const taskLine = `${taskNumber}. ${status} ${description}`;
-          
-          const color = task.completed || task.cancelled ? 'gray' : undefined;
+        {
+          output.map((task, index) => {
+            let statusSymbol = '  '; // Default to two spaces for alignment
+            if (task.completed) {
+              statusSymbol = '✓ ';
+            } else if (task.cancelled) {
+              statusSymbol = '✗ ';
+            }
 
-          return (
-            <Text key={index} color={color}>
-              {taskLine}
-            </Text>
-          );
-        })}
+            const serializedTask = parser.serialize([task]);
+            // Remove the markdown list prefix, status, and the header
+            const taskDescription = serializedTask.replace(/# To-Do List\n\n## Tasks\n\n- \[[ x-]\] /, '');
+            
+            const taskNumber = String(index + 1).padStart(maxDigits, ' ');
+            const numberedTaskLine = `${taskNumber}. ${statusSymbol}${taskDescription}`;
+            
+            const color = task.completed || task.cancelled ? 'gray' : undefined;
+
+            return (
+              <Text key={index} color={color}>
+                {numberedTaskLine}
+              </Text>
+            );
+          })
+        }
       </Box>
     );
   }
