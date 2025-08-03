@@ -30,4 +30,13 @@ describe('Path Handling', () => {
     const { stdout } = await execPromise(`node ${cliPath} ${customDir}`);
     expect(stdout).toContain('A task from a custom directory');
   });
+
+  test('should list tasks from a file in the current directory by name', async () => {
+    const customTodoFile = path.join(tempDir, 'README.md');
+    await fs.writeFile(customTodoFile, '- [ ] A task from README.md');
+
+    // Execute the command from within the temp directory
+    const { stdout } = await execPromise(`node ${cliPath} README.md`, { cwd: tempDir });
+    expect(stdout).toContain('A task from README.md');
+  });
 });

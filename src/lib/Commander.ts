@@ -19,6 +19,7 @@ export class Commander {
 
     // Path handling logic
     try {
+      // Check if the command is a path
       const stats = await fs.stat(command);
       let filePath = command;
       if (stats.isDirectory()) {
@@ -28,8 +29,21 @@ export class Commander {
       command = 'list'; // Default to list command
       args = [];
     } catch (error) {
-      // Not a path, use the default todoManager
-      todoManager = new TodoManager(this.todoDir, this.todoFile, this.doneFile);
+      // Not a path, check if it's a file in the current directory
+      try {
+        const localPath = path.join(process.cwd(), command);
+        const stats = await fs.stat(localPath);
+        let filePath = localPath;
+        if (stats.isDirectory()) {
+          filePath = path.join(localPath, 'todo.md');
+        }
+        todoManager = new TodoManager(path.dirname(filePath), path.basename(filePath));
+        command = 'list'; // Default to list command
+        args = [];
+      } catch (error2) {
+        // Not a path, use the default todoManager
+        todoManager = new TodoManager(this.todoDir, this.todoFile, this.doneFile);
+      }
     }
 
     await todoManager.loadTasks();
