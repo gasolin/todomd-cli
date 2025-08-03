@@ -21,6 +21,7 @@ const cli = meow(
   Commands
     list, ls                      List all tasks
     listall, lsa                  List all tasks (including completed and cancelled)
+    listcon, lsc <context>        List tasks by context
     add, a <task>                 Add a new task
     done, do <id>                 Mark task as completed
     undone, ud <id>               Mark task as incomplete
