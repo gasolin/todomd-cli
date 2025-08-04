@@ -6,7 +6,7 @@ A command-line tool for managing todomd format files, inspired by todo.txt-cli b
 
 - 📝 **Markdown Native**: Uses standard Markdown task list syntax
 - 🏷️ **Rich Metadata**: Supports priorities, projects, contexts, due dates, and custom attributes
-- 🌳 **Hierarchical Tasks**: Native support for subtasks through indentation
+- 🌳 **Hierarchical Tasks**: Native support for subtasks and tree-like display
 - 🤖 **LLM-Friendly**: Structured format optimized for AI parsing and automation
 - 🔧 **Configurable**: Environment variable support for custom directories
 - 🎨 **Beautiful CLI**: Built with Ink for a modern terminal experience
@@ -76,7 +76,7 @@ todomd add "(A) Important meeting preparation @office +work"
 todomd add "Call dentist for appointment"
 ```
 
-3. List your tasks:
+3. List your tasks (subtasks will be displayed in a tree structure):
 
 ```bash
 todomd list

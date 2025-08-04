@@ -35,6 +35,11 @@ describe('list command', () => {
     expect(stdout).toContain('A task in progress')
     expect(stdout).toContain('A completed task')
     expect(stdout).toContain('A cancelled task')
+
+    // Verify summary
+    expect(stdout).toContain('TODO: 2')
+    expect(stdout).toContain('DONE: 1')
+    expect(stdout).toContain('TOTAL: 4')
   })
 
   test('should list all tasks with full metadata', async () => {
