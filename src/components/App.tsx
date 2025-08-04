@@ -84,9 +84,17 @@ const App: React.FC<AppProps> = ({ command, args, flags, todoDir }) => {
   // Handle Task[] output for lists
   if (Array.isArray(output)) {
     if (output.length === 0) {
+      if (command === ValidCommands.Search) {
+        return <Text color='magenta'>No tasks found matching "{args.join(' ')}"</Text>
+      }
+      if (command === ValidCommands.ListProj || command === ValidCommands.ListProjAlias) {
+        return <Text color='magenta'>No tasks found for project "+{args[0]}"</Text>
+      }
+      if (command === ValidCommands.ListCon || command === ValidCommands.ListConAlias) {
+        return <Text color='magenta'>No tasks found for context "@{args[0]}"</Text>
+      }
       return <Text color='magenta'>No tasks found.</Text>
     }
-
     const maxDigits = String(output.length).length
 
     return (

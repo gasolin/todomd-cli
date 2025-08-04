@@ -41,7 +41,7 @@ describe('listcon command', () => {
       `node ${cliPath} listcon nonexistent`,
       { env: { ...process.env, TODO_DIR: tempDir } }
     )
-    expect(stdout).toContain('No tasks found.')
+    expect(stdout).toContain('No tasks found for context "@nonexistent"')
   })
 
   test('should list all unique contexts when no context is specified', async () => {
