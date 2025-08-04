@@ -26,8 +26,6 @@ export enum ValidCommands {
   EditAlias = 'e',
   List = 'list',
   ListAlias = 'ls',
-  ListAll = 'listall',
-  ListAllAlias = 'lsa',
   ListCon = 'listcon',
   ListConAlias = 'lsc',
   ListPri = 'listpri',

@@ -15,8 +15,7 @@ A command-line tool for managing todomd format files, inspired by todo.txt-cli b
 
 - [x] `init` - Initialize the todo directory
 - [x] `add, a <task>` - Add a new task
-- [x] `list, ls` - List all tasks
-- [x] `listall, lsa` - List all tasks (including completed and cancelled)
+- [x] `list, ls` - List all tasks (including completed and cancelled)
 - [x] `listcon, lsc <context>` - List tasks by context, or list all contexts
 - [x] `listpri, lsp <priority>` - List tasks by priority
 - [x] `listproj, lsproj <project>` - List tasks by project, or list all projects
@@ -103,7 +102,7 @@ todomd path/to/a/project/
 
 ### Basic Operations
 
-- `todomd list, ls` - List all tasks
+- `todomd list, ls` - List all tasks (including completed and cancelled)
 - `todomd add, a <task>` - Add a new task
 - `todomd done, do <id>` - Mark task as completed
 - `todomd undone, ud <id>` - Mark task as incomplete

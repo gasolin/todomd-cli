@@ -214,17 +214,10 @@ export class Commander {
         return results
       }
 
-      case ValidCommands.ListAll:
-      case ValidCommands.ListAllAlias:
-        return tasks
-
       case ValidCommands.List:
       case ValidCommands.ListAlias:
       default:
-        return tasks.filter(
-          (task) =>
-            task.status === Status.Todo || task.status === Status.InProgress
-        )
+        return tasks
     }
   }
 }

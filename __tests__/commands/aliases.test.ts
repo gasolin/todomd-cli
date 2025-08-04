@@ -126,24 +126,6 @@ describe('Command Aliases', () => {
     expect(stdout).toContain('A task for the ls alias')
   })
 
-  test('alias "lsa" should work for "listall"', async () => {
-    await execPromise(`node ${cliPath} add "Incomplete task for lsa"`, {
-      env: { ...process.env, TODO_DIR: tempDir }
-    })
-    await execPromise(`node ${cliPath} add "Completed task for lsa"`, {
-      env: { ...process.env, TODO_DIR: tempDir }
-    })
-    await execPromise(`node ${cliPath} done 2`, {
-      env: { ...process.env, TODO_DIR: tempDir }
-    })
-
-    const { stdout } = await execPromise(`node ${cliPath} lsa`, {
-      env: { ...process.env, TODO_DIR: tempDir }
-    })
-    expect(stdout).toContain('Incomplete task for lsa')
-    expect(stdout).toContain('Completed task for lsa')
-  })
-
   test('alias "lsc" should work for "listcon"', async () => {
     await execPromise(`node ${cliPath} add "A task for lsc @work"`, {
       env: { ...process.env, TODO_DIR: tempDir }
