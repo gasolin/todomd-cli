@@ -1,4 +1,4 @@
-import { Task } from '../types/Task'
+import { Task, Status } from '../types/Task'
 
 export class TodoParser {
   parse(content: string): Task[] {
@@ -24,7 +24,7 @@ export class TodoParser {
 
   private isTaskLine(line: string): boolean {
     const trimmed = line.trim()
-    return /^-\s*\[([ x-])\]/.test(trimmed)
+    return /^-\s*\[([ x~-])\]/.test(trimmed)
   }
 
   private getIndentLevel(line: string): number {
@@ -38,19 +38,27 @@ export class TodoParser {
     const trimmed = line.trim()
 
     // Extract task status
-    const statusMatch = trimmed.match(/^-\s*\[([x -])\]\s*(.*)/)
+    const statusMatch = trimmed.match(/^-\s*\[([x~ -])\]\s*(.*)/)
     if (!statusMatch) {
       throw new Error(`Invalid task line: ${line}`)
     }
 
-    const status = statusMatch[1]
+    const statusChar = statusMatch[1]
     const taskContent = statusMatch[2]
+
+    let status: Status = Status.Todo
+    if (statusChar === 'x') {
+      status = Status.Done
+    } else if (statusChar === '-') {
+      status = Status.Cancelled
+    } else if (statusChar === '~') {
+      status = Status.InProgress
+    }
 
     const task: Task = {
       id,
       description: '',
-      completed: status === 'x',
-      cancelled: status === '-',
+      status: status,
       level,
       projects: [],
       contexts: [],
@@ -102,6 +110,11 @@ export class TodoParser {
           case 'rec':
             task.recurrence = value
             break
+          case 'status':
+            if (Object.values(Status).includes(value as Status)) {
+              task.status = value as Status
+            }
+            break
           default:
             if (!task.customAttributes) {
               task.customAttributes = {}
@@ -135,9 +148,16 @@ export class TodoParser {
 
     tasks.forEach((task) => {
       const indent = '  '.repeat(task.level)
-      const status = task.completed ? 'x' : task.cancelled ? '-' : ' '
+      let statusChar = ' '
+      if (task.status === Status.Done) {
+        statusChar = 'x'
+      } else if (task.status === Status.Cancelled) {
+        statusChar = '-'
+      } else if (task.status === Status.InProgress) {
+        statusChar = '~'
+      }
 
-      let taskLine = `${indent}- [${status}] `
+      let taskLine = `${indent}- [${statusChar}] `
 
       // Add priority
       if (task.priority) {

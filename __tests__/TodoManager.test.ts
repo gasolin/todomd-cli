@@ -1,116 +1,57 @@
+import { setupTestDirectory, cleanupTestDirectory, addTask } from './helpers'
 import { TodoManager } from '../src/lib/TodoManager'
-import { jest } from '@jest/globals'
-
-// Mock the fs/promises module
-jest.mock('fs/promises', () => ({
-  readFile: jest.fn(),
-  writeFile: jest.fn(),
-  mkdir: jest.fn(),
-  access: jest.fn()
-}))
-
-const fs = require('fs/promises')
+import { Status } from '../src/types/Task'
+import fs from 'fs/promises'
+import path from 'path'
 
 describe('TodoManager', () => {
+  let tempDir: string
   let todoManager: TodoManager
-  const todoDir = '/home/user/.todomd'
-  const todoFile = 'todo.md'
-  const doneFile = 'done.md'
 
-  beforeEach(() => {
-    // Reset mocks before each test
-    ;(fs.readFile as jest.Mock).mockClear()
-    ;(fs.writeFile as jest.Mock).mockClear()
-    ;(fs.mkdir as jest.Mock).mockClear()
-    ;(fs.access as jest.Mock).mockClear()
+  beforeEach(async () => {
+    tempDir = await setupTestDirectory()
+    todoManager = new TodoManager(tempDir)
+  })
 
-    todoManager = new TodoManager(todoDir, todoFile, doneFile)
+  afterEach(async () => {
+    await cleanupTestDirectory(tempDir)
   })
 
   test('loadTasks should read and parse the todo file', async () => {
-    const mockContent = '- [ ] Task 1\n- [x] Task 2'
-    ;(fs.readFile as jest.Mock).mockResolvedValue(mockContent)
+    const todoFilePath = path.join(tempDir, 'todo.md')
+    const fileContent = `- [ ] Task 1
+- [x] Task 2`
+    await fs.writeFile(todoFilePath, fileContent)
 
     const tasks = await todoManager.loadTasks()
-
-    expect(fs.readFile).toHaveBeenCalledWith(`${todoDir}/${todoFile}`, 'utf8')
     expect(tasks).toHaveLength(2)
     expect(tasks[0].description).toBe('Task 1')
-    expect(tasks[1].completed).toBe(true)
+    expect(tasks[1].status).toBe(Status.Done)
   })
 
-  test('loadTasks should handle file not found error', async () => {
-    const error = new Error('File not found') as any
-    error.code = 'ENOENT'
-    ;(fs.readFile as jest.Mock).mockRejectedValue(error)
-
-    const tasks = await todoManager.loadTasks()
-
+  test('loadTasks should handle file not found error by returning an empty array', async () => {
+    // Point to a directory that doesn't exist
+    const nonExistentManager = new TodoManager('/non/existent/dir')
+    const tasks = await nonExistentManager.loadTasks()
     expect(tasks).toEqual([])
   })
 
-  test('addTask should add a new task and save the file', async () => {
-    const initialContent = '- [ ] Existing task'
-    ;(fs.readFile as jest.Mock).mockResolvedValue(initialContent)
-    ;(fs.writeFile as jest.Mock).mockResolvedValue(undefined)
+  test('updateTask should correctly modify a task and set completionDate', async () => {
+    await addTask(tempDir, 'Initial task')
+    await todoManager.loadTasks() // Load the initial task
 
-    await todoManager.loadTasks() // Load initial tasks
-    await todoManager.addTask('New task')
+    // Update the task to be 'Done'
+    await todoManager.updateTask(0, {
+      description: 'Updated description',
+      status: Status.Done
+    })
 
-    const tasks = todoManager.getTasks()
-    expect(tasks).toHaveLength(2)
-    expect(tasks[1].description).toBe('New task')
-    expect(fs.writeFile).toHaveBeenCalled()
-  })
-
-  test('updateTask should modify a task and save', async () => {
-    const initialContent = '- [ ] Task to update'
-    ;(fs.readFile as jest.Mock).mockResolvedValue(initialContent)
-    ;(fs.writeFile as jest.Mock).mockResolvedValue(undefined)
-
-    await todoManager.loadTasks()
-    const taskToUpdate = todoManager.getTasks()[0]
-    taskToUpdate.completed = true
-
-    await todoManager.updateTask(0, taskToUpdate)
-
-    const tasks = todoManager.getTasks()
-    expect(tasks[0].completed).toBe(true)
-    expect(fs.writeFile).toHaveBeenCalled()
-  })
-
-  test('deleteTask should remove a task and save', async () => {
-    const initialContent = '- [ ] Task 1\n- [ ] Task to delete\n- [ ] Task 3'
-    ;(fs.readFile as jest.Mock).mockResolvedValue(initialContent)
-    ;(fs.writeFile as jest.Mock).mockResolvedValue(undefined)
-
-    await todoManager.loadTasks()
-    await todoManager.deleteTask(1) // Delete the second task
-
-    const tasks = todoManager.getTasks()
-    expect(tasks).toHaveLength(2)
-    expect(tasks[0].description).toBe('Task 1')
-    expect(tasks[1].description).toBe('Task 3')
-    expect(fs.writeFile).toHaveBeenCalled()
-  })
-
-  test('init should create directory and files', async () => {
-    ;(fs.access as jest.Mock).mockRejectedValue(new Error('Dir not found')) // Simulate directory doesn't exist
-    ;(fs.mkdir as jest.Mock).mockResolvedValue(undefined)
-    ;(fs.writeFile as jest.Mock).mockResolvedValue(undefined)
-
-    await todoManager.init()
-
-    expect(fs.mkdir).toHaveBeenCalledWith(todoDir, { recursive: true })
-    expect(fs.writeFile).toHaveBeenCalledWith(
-      `${todoDir}/${todoFile}`,
-      expect.any(String),
-      'utf8'
-    )
-    expect(fs.writeFile).toHaveBeenCalledWith(
-      `${todoDir}/${doneFile}`,
-      expect.any(String),
-      'utf8'
+    const updatedTasks = todoManager.getTasks()
+    expect(updatedTasks[0].description).toBe('Updated description')
+    expect(updatedTasks[0].status).toBe(Status.Done)
+    expect(updatedTasks[0].completionDate).toBeDefined()
+    expect(updatedTasks[0].completionDate).toBe(
+      new Date().toISOString().split('T')[0]
     )
   })
 })

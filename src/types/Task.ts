@@ -1,8 +1,14 @@
+export enum Status {
+  Todo = 'todo',
+  InProgress = 'inprogress',
+  Done = 'done',
+  Cancelled = 'cancelled'
+}
+
 export interface Task {
   id?: number
   description: string
-  completed: boolean
-  cancelled?: boolean
+  status: Status
   priority?: string
   projects?: string[]
   contexts?: string[]

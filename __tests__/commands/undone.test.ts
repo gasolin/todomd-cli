@@ -7,9 +7,12 @@ import {
 } from '../helpers'
 import fs from 'fs/promises'
 import path from 'path'
+import { TodoParser } from '../../src/lib/TodoParser'
+import { Status } from '../../src/types/Task'
 
 describe('undone command', () => {
   let tempDir: string
+  const parser = new TodoParser()
 
   beforeEach(async () => {
     tempDir = await setupTestDirectory()
@@ -35,10 +38,12 @@ describe('undone command', () => {
     })
     expect(stdout).toContain('Task marked as incomplete')
 
-    // 4. Verify the file content
+    // 4. Verify the task status
     const todoFilePath = path.join(tempDir, 'todo.md')
     const fileContent = await fs.readFile(todoFilePath, 'utf8')
-    expect(fileContent).toContain(`- [ ] ${taskDescription}`)
-    expect(fileContent).not.toContain(`- [x] ${taskDescription}`)
+    const tasks = parser.parse(fileContent)
+
+    expect(tasks[0].status).toBe(Status.Todo)
+    expect(tasks[0].completionDate).toBeUndefined()
   })
 })

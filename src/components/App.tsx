@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Commander } from '../lib/Commander'
-import { Task } from '../types/Task'
+import { Task, Status } from '../types/Task'
 import { ValidCommands } from '../types/Commands'
 import { TodoParser } from '../lib/TodoParser'
 import { parseISO, isPast } from 'date-fns'
@@ -12,10 +12,10 @@ interface AppProps {
   todoDir: string
 }
 
-type Status = 'loading' | 'success' | 'error'
+type AppStatus = 'loading' | 'success' | 'error'
 
 const App: React.FC<AppProps> = ({ command, args, flags, todoDir }) => {
-  const [status, setStatus] = useState<Status>('loading')
+  const [appStatus, setAppStatus] = useState<AppStatus>('loading')
   const [output, setOutput] = useState<string | Task[] | null>(null)
   const [Ink, setInk] = useState<any>(null)
   const [parser] = useState(() => new TodoParser())
@@ -42,19 +42,19 @@ const App: React.FC<AppProps> = ({ command, args, flags, todoDir }) => {
         const commander = new Commander(todoDir, flags.file, flags.doneFile)
         const result = await commander.run(command, args)
         setOutput(result)
-        setStatus('success')
+        setAppStatus('success')
       } catch (err) {
         setOutput(
           err instanceof Error ? err.message : 'An unknown error occurred'
         )
-        setStatus('error')
+        setAppStatus('error')
       }
     }
 
     run()
   }, [Ink, command, args, flags, todoDir])
 
-  if (status === 'loading' || !Ink) {
+  if (appStatus === 'loading' || !Ink) {
     return null
   }
 
@@ -63,7 +63,7 @@ const App: React.FC<AppProps> = ({ command, args, flags, todoDir }) => {
   if (typeof output === 'string') {
     let color = 'green'
     if (
-      status === 'error' ||
+      appStatus === 'error' ||
       output.startsWith('No tasks found') ||
       output.startsWith('No contexts found') ||
       output.startsWith('No projects found')
@@ -87,16 +87,18 @@ const App: React.FC<AppProps> = ({ command, args, flags, todoDir }) => {
       <Box flexDirection='column'>
         {output.map((task, index) => {
           let statusSymbol = '  ' // Default to two spaces for alignment
-          if (task.completed) {
+          if (task.status === Status.Done) {
             statusSymbol = '✓ '
-          } else if (task.cancelled) {
+          } else if (task.status === Status.Cancelled) {
             statusSymbol = '✗ '
+          } else if (task.status === Status.InProgress) {
+            statusSymbol = '~ '
           }
 
           const serializedTask = parser.serialize([task])
           // Remove the markdown list prefix, status, and the header
           const taskDescription = serializedTask.replace(
-            /# To-Do List\n\n## Tasks\n\n- \[[ x-]\] /,
+            /# To-Do List\n\n## Tasks\n\n- \[[ x~-]\] /,
             ''
           )
 
@@ -104,7 +106,7 @@ const App: React.FC<AppProps> = ({ command, args, flags, todoDir }) => {
           const numberedTaskLine = `${taskNumber}. ${statusSymbol}${taskDescription}`
 
           let color
-          if (task.completed || task.cancelled) {
+          if (task.status === Status.Done || task.status === Status.Cancelled) {
             color = 'gray'
           } else if (task.dueDate && isPast(parseISO(task.dueDate))) {
             color = 'red'
