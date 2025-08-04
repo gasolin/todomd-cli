@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { Commander } from '../lib/Commander.js'
-import { Task } from '../types/Task.js'
-import { TodoParser } from '../lib/TodoParser.js'
+import { Commander } from '../lib/Commander'
+import { Task } from '../types/Task'
+import { ValidCommands } from '../types/Commands'
+import { TodoParser } from '../lib/TodoParser'
 import { parseISO, isPast } from 'date-fns'
 
 interface AppProps {
@@ -18,6 +19,12 @@ const App: React.FC<AppProps> = ({ command, args, flags, todoDir }) => {
   const [output, setOutput] = useState<string | Task[] | null>(null)
   const [Ink, setInk] = useState<any>(null)
   const [parser] = useState(() => new TodoParser())
+
+  const isConxtOrProject = (command: string) =>
+    command === ValidCommands.ListCon ||
+    command === ValidCommands.ListConAlias ||
+    command === ValidCommands.ListProj ||
+    command === ValidCommands.ListProjAlias
 
   useEffect(() => {
     const loadInk = async () => {
@@ -52,14 +59,18 @@ const App: React.FC<AppProps> = ({ command, args, flags, todoDir }) => {
   }
 
   const { Text, Box } = Ink
-
   // Handle string output for messages
   if (typeof output === 'string') {
     let color = 'green'
-    if (status === 'error') {
+    if (
+      status === 'error' ||
+      output.startsWith('No tasks found') ||
+      output.startsWith('No contexts found') ||
+      output.startsWith('No projects found')
+    ) {
       color = 'magenta'
-    } else if (output.startsWith('No tasks found')) {
-      color = 'magenta'
+    } else if (isConxtOrProject(command)) {
+      color = 'white'
     }
     return <Text color={color}>{output}</Text>
   }
@@ -67,7 +78,7 @@ const App: React.FC<AppProps> = ({ command, args, flags, todoDir }) => {
   // Handle Task[] output for lists
   if (Array.isArray(output)) {
     if (output.length === 0) {
-      return <Text>No tasks found.</Text>
+      return <Text color='magenta'>No tasks found.</Text>
     }
 
     const maxDigits = String(output.length).length
@@ -97,6 +108,11 @@ const App: React.FC<AppProps> = ({ command, args, flags, todoDir }) => {
             color = 'gray'
           } else if (task.dueDate && isPast(parseISO(task.dueDate))) {
             color = 'red'
+          }
+
+          // For listcon and listproj, we want to keep the default color
+          if (isConxtOrProject(command)) {
+            color = 'white'
           }
 
           return (
