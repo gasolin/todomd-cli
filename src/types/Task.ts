@@ -7,6 +7,7 @@ export enum Status {
 
 export interface Task {
   id?: number
+  lineNumber?: number
   description: string
   status: Status
   priority?: string

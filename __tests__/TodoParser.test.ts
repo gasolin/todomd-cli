@@ -108,40 +108,19 @@ describe('TodoParser', () => {
 
   describe('serialize', () => {
     test('should serialize a simple task', () => {
-      const tasks: Task[] = [
-        {
-          id: 1,
-          description: 'Finish report',
-          status: Status.Done,
-          level: 0,
-          projects: [],
-          contexts: [],
-          tags: [],
-          customAttributes: {}
-        }
-      ]
-      const expected = '- [x] Finish report'
-      // Using trim() to avoid issues with trailing newlines
-      expect(parser.serialize(tasks).includes(expected)).toBe(true)
+      const simpleTaskContent = '- [x] Finish report'
+      const parser = new TodoParser()
+      const tasks = parser.parse(simpleTaskContent)
+      
+      const result = parser.serialize(tasks)
+      expect(result.trim()).toBe(simpleTaskContent)
     })
 
     test('should serialize a complex task with all metadata', () => {
-      const tasks: Task[] = [
-        {
-          id: 2,
-          description: 'Review the proposal',
-          status: Status.InProgress,
-          level: 0,
-          priority: 'A',
-          projects: ['project-x'],
-          contexts: ['office'],
-          tags: ['review'],
-          creationDate: '2025-07-28',
-          dueDate: '2025-08-15',
-          recurrence: '2w',
-          customAttributes: { estimated: '4h' }
-        }
-      ]
+      const complexTaskContent = '- [~] (A) Review the proposal +project-x @office #review cr:2025-07-28 due:2025-08-15 rec:2w estimated:4h'
+      const parser = new TodoParser()
+      const tasks = parser.parse(complexTaskContent)
+
       const result = parser.serialize(tasks)
       expect(result).toContain('- [~] (A) Review the proposal')
       expect(result).toContain('+project-x')
@@ -154,28 +133,10 @@ describe('TodoParser', () => {
     })
 
     test('should serialize tasks with hierarchy (indentation)', () => {
-      const tasks: Task[] = [
-        {
-          id: 1,
-          description: 'Main task',
-          status: Status.Todo,
-          level: 0,
-          projects: [],
-          contexts: [],
-          tags: [],
-          customAttributes: {}
-        },
-        {
-          id: 2,
-          description: 'Subtask',
-          status: Status.Todo,
-          level: 1,
-          projects: [],
-          contexts: [],
-          tags: [],
-          customAttributes: {}
-        }
-      ]
+      const hierarchicalContent = '- [ ] Main task\n  - [ ] Subtask'
+      const parser = new TodoParser()
+      const tasks = parser.parse(hierarchicalContent)
+
       const result = parser.serialize(tasks)
       expect(result).toContain('- [ ] Main task')
       expect(result).toContain('  - [ ] Subtask')

@@ -81,6 +81,24 @@ const App: React.FC<AppProps> = ({ command, args, flags, todoDir }) => {
     return differenceInDays(date, new Date()) <= nearDays
   }
 
+  const formatTaskLine = (task: Task): string => {
+    let line = ''
+    if (task.priority) {
+      line += `(${task.priority}) `
+    }
+    line += task.description
+    if (task.projects && task.projects.length > 0) {
+      line += ` ${task.projects.map(p => `+${p}`).join(' ')}`
+    }
+    if (task.contexts && task.contexts.length > 0) {
+      line += ` ${task.contexts.map(c => `@${c}`).join(' ')}`
+    }
+    if (task.dueDate) {
+      line += ` due:${task.dueDate}`
+    }
+    return line
+  }
+
   // Handle Task[] output for lists
   if (Array.isArray(output)) {
     if (output.length === 0) {
@@ -102,20 +120,14 @@ const App: React.FC<AppProps> = ({ command, args, flags, todoDir }) => {
         {output.map((task, index) => {
           let statusSymbol = '  ' // Default to two spaces for alignment
           if (task.status === Status.Done) {
-            statusSymbol = '✓ ' 
+            statusSymbol = '✓ '
           } else if (task.status === Status.Cancelled) {
-            statusSymbol = '✗ ' 
+            statusSymbol = '✗ '
           } else if (task.status === Status.InProgress) {
-            statusSymbol = '~ ' 
+            statusSymbol = '~ '
           }
 
-          const serializedTask = parser.serialize([task])
-          // Remove the markdown list prefix, status, and the header
-          const taskDescription = serializedTask.replace(
-            /# To-Do List\n\n## Tasks\n\n- \[[ x~-]\] /,
-            ''
-          )
-
+          const taskDescription = formatTaskLine(task)
           const taskNumber = String(index + 1).padStart(maxDigits, ' ')
           const numberedTaskLine = `${taskNumber}. ${statusSymbol}${taskDescription}`
 

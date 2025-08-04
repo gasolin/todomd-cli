@@ -1,13 +1,16 @@
 import { Task, Status } from '../types/Task'
 
 export class TodoParser {
+  private rawLines: string[] = []
+
   parse(content: string): Task[] {
-    const lines = content.split('\n')
+    this.rawLines = content.split('\n')
     const tasks: Task[] = []
     let currentId = 0
+    let taskLineNumbers: number[] = []
 
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i]
+    for (let i = 0; i < this.rawLines.length; i++) {
+      const line = this.rawLines[i]
 
       if (this.isTaskLine(line)) {
         const task = this.parseTaskLine(
@@ -15,12 +18,15 @@ export class TodoParser {
           this.getIndentLevel(line),
           currentId++
         )
+        task.lineNumber = i
         tasks.push(task)
+        taskLineNumbers.push(i)
       }
     }
 
     return tasks
   }
+
 
   private isTaskLine(line: string): boolean {
     const trimmed = line.trim()
@@ -139,73 +145,77 @@ export class TodoParser {
     return task
   }
 
-  serialize(tasks: Task[]): string {
-    const lines: string[] = []
+  serialize(tasks: Task[], forArchive: boolean = false): string {
+    if (forArchive) {
+      return tasks.map(task => this.serializeTask(task)).join('\n');
+    }
 
-    // Add header
-    lines.push('# To-Do List\n')
-    lines.push('## Tasks\n')
-
-    tasks.forEach((task) => {
-      const indent = '  '.repeat(task.level)
-      let statusChar = ' '
-      if (task.status === Status.Done) {
-        statusChar = 'x'
-      } else if (task.status === Status.Cancelled) {
-        statusChar = '-'
-      } else if (task.status === Status.InProgress) {
-        statusChar = '~'
+    const updatedLines = [...this.rawLines];
+    let taskIndex = 0;
+    for (let i = 0; i < updatedLines.length; i++) {
+      if (this.isTaskLine(updatedLines[i])) {
+        const task = tasks[taskIndex];
+        if (task && task.lineNumber === i) {
+          updatedLines[i] = this.serializeTask(task);
+          taskIndex++;
+        }
       }
+    }
 
-      let taskLine = `${indent}- [${statusChar}] `
+    return updatedLines.join('\n');
+  }
 
-      // Add priority
-      if (task.priority) {
-        taskLine += `(${task.priority}) `
-      }
+  private serializeTask(task: Task): string {
+    const indent = '  '.repeat(task.level)
+    let statusChar = ' '
+    if (task.status === Status.Done) {
+      statusChar = 'x'
+    } else if (task.status === Status.Cancelled) {
+      statusChar = '-'
+    } else if (task.status === Status.InProgress) {
+      statusChar = '~'
+    }
 
-      // Add description
-      taskLine += task.description
+    let taskLine = `${indent}- [${statusChar}] `
 
-      // Add projects
-      if (task.projects && task.projects.length > 0) {
-        taskLine += ' ' + task.projects.map((p) => `+${p}`).join(' ')
-      }
+    if (task.priority) {
+      taskLine += `(${task.priority}) `
+    }
 
-      // Add contexts
-      if (task.contexts && task.contexts.length > 0) {
-        taskLine += ' ' + task.contexts.map((c) => `@${c}`).join(' ')
-      }
+    let descriptionPart = task.description
+    const metadata: string[] = []
 
-      // Add tags
-      if (task.tags && task.tags.length > 0) {
-        taskLine += ' ' + task.tags.map((t) => `#${t}`).join(' ')
-      }
+    if (task.projects && task.projects.length > 0) {
+      metadata.push(...task.projects.map((p) => `+${p}`))
+    }
+    if (task.contexts && task.contexts.length > 0) {
+      metadata.push(...task.contexts.map((c) => `@${c}`))
+    }
+    if (task.tags && task.tags.length > 0) {
+      metadata.push(...task.tags.map((t) => `#${t}`))
+    }
+    if (task.creationDate) {
+      metadata.push(`cr:${task.creationDate}`)
+    }
+    if (task.completionDate) {
+      metadata.push(`cm:${task.completionDate}`)
+    }
+    if (task.dueDate) {
+      metadata.push(`due:${task.dueDate}`)
+    }
+    if (task.recurrence) {
+      metadata.push(`rec:${task.recurrence}`)
+    }
+    if (task.customAttributes) {
+      Object.entries(task.customAttributes).forEach(([key, value]) => {
+        metadata.push(`${key}:${value}`)
+      })
+    }
 
-      // Add dates and recurrence
-      if (task.creationDate) {
-        taskLine += ` cr:${task.creationDate}`
-      }
-      if (task.completionDate) {
-        taskLine += ` cm:${task.completionDate}`
-      }
-      if (task.dueDate) {
-        taskLine += ` due:${task.dueDate}`
-      }
-      if (task.recurrence) {
-        taskLine += ` rec:${task.recurrence}`
-      }
-
-      // Add custom attributes
-      if (task.customAttributes) {
-        Object.entries(task.customAttributes).forEach(([key, value]) => {
-          taskLine += ` ${key}:${value}`
-        })
-      }
-
-      lines.push(taskLine)
-    })
-
-    return lines.join('\n')
+    taskLine += descriptionPart
+    if (metadata.length > 0) {
+      taskLine += ' ' + metadata.join(' ')
+    }
+    return taskLine;
   }
 }

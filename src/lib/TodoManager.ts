@@ -21,6 +21,22 @@ export class TodoManager {
     this.parser = new TodoParser()
   }
 
+  private async appendContent(filePath: string, contentToAppend: string): Promise<void> {
+    let currentContent = ''
+    try {
+      currentContent = await fs.readFile(filePath, 'utf8')
+    } catch (error) {
+      // Ignore if file doesn't exist
+    }
+
+    if (currentContent.trim() === '') {
+      await fs.writeFile(filePath, contentToAppend, 'utf8')
+    } else {
+      const separator = currentContent.endsWith('\n') ? '' : '\n'
+      await fs.appendFile(filePath, `${separator}${contentToAppend}`, 'utf8')
+    }
+  }
+
   getTodoFilePath(): string {
     return this.todoFile
   }
@@ -77,16 +93,10 @@ export class TodoManager {
   }
 
   async addTask(taskText: string): Promise<void> {
-    const newTask = this.parser.parseTaskLine(
-      `- [ ] ${taskText}`,
-      0,
-      this.tasks.length
-    )
-    if (!newTask.creationDate) {
-      newTask.creationDate = new Date().toISOString().split('T')[0]
-    }
-    this.tasks.push(newTask)
-    await this.saveTasks()
+    const creationDate = new Date().toISOString().split('T')[0]
+    const lineWithDate = `- [ ] ${taskText} cr:${creationDate}`
+    await this.appendContent(this.todoFile, lineWithDate)
+    await this.loadTasks()
   }
 
   async updateTask(
@@ -124,34 +134,48 @@ export class TodoManager {
     if (index < 0 || index >= this.tasks.length) {
       throw new Error('Invalid task index')
     }
-    this.tasks.splice(index, 1)
-    await this.saveTasks()
+    const taskToDelete = this.tasks[index]
+    if (taskToDelete.lineNumber === undefined) {
+      throw new Error('Cannot delete a task without a line number.')
+    }
+
+    const todoContent = await fs.readFile(this.todoFile, 'utf8')
+    const todoLines = todoContent.split('\n')
+    const newTodoLines = todoLines.filter(
+      (_, i) => i !== taskToDelete.lineNumber
+    )
+    await fs.writeFile(this.todoFile, newTodoLines.join('\n'), 'utf8')
+
+    await this.loadTasks()
   }
 
   async archive(): Promise<void> {
     const completedTasks = this.tasks.filter(
       (task) => task.status === Status.Done
     )
-    const incompleteTasks = this.tasks.filter(
-      (task) => task.status !== Status.Done
-    )
-
     if (completedTasks.length === 0) {
       return
     }
 
-    this.tasks = incompleteTasks
-    await this.saveTasks()
+    const completedLineNumbers = new Set(
+      completedTasks.map((t) => t.lineNumber)
+    )
 
-    let doneContent = ''
-    try {
-      doneContent = await fs.readFile(this.doneFile, 'utf8')
-    } catch {
-      // ignore if done.md doesn't exist
-    }
-    const completedContent = this.parser.serialize(completedTasks)
-    const updatedDoneContent =
-      (doneContent ? doneContent + '\n' : '') + completedContent
-    await fs.writeFile(this.doneFile, updatedDoneContent, 'utf8')
+    // Read todo.md and filter out completed tasks
+    const todoContent = await fs.readFile(this.todoFile, 'utf8')
+    const todoLines = todoContent.split('\n')
+    const newTodoLines = todoLines.filter(
+      (_, index) => !completedLineNumbers.has(index)
+    )
+    await fs.writeFile(this.todoFile, newTodoLines.join('\n'), 'utf8')
+
+    // Serialize only the completed tasks for archiving
+    const completedContent = this.parser.serialize(completedTasks, true)
+    
+    // Append to done.md using the new helper
+    await this.appendContent(this.doneFile, completedContent)
+
+    // Reload tasks
+    await this.loadTasks()
   }
 }
