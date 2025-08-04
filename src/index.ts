@@ -10,7 +10,7 @@ import { pathToFileURL } from 'url'
 import { ValidCommands } from './types/Commands.js'
 
 // Load environment variables
-dotenv.config()
+dotenv.config({ quiet: true })
 
 const cli = meow(
   `
