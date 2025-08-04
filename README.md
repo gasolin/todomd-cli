@@ -16,7 +16,10 @@ A command-line tool for managing todomd format files, inspired by todo.txt-cli b
 - [x] `init` - Initialize the todo directory
 - [x] `add, a <task>` - Add a new task
 - [x] `list, ls` - List all tasks
-- [x] `listall` - List all tasks (including completed and cancelled)
+- [x] `listall, lsa` - List all tasks (including completed and cancelled)
+- [x] `listcon, lsc <context>` - List tasks by context, or list all contexts
+- [x] `listpri, lsp <priority>` - List tasks by priority
+- [x] `listproj, lsproj <project>` - List tasks by project, or list all projects
 - [x] `done, do <id>` - Mark a task as completed
 - [x] `undone, ud <id>` - Mark task as incomplete
 - [x] `delete, rm, del <id>` - Delete a task
@@ -59,13 +62,11 @@ echo "TODO_DIR=/path/to/your/todos" > .env
 ## Quick Start
 
 1. Initialize a new todomd directory:
-
 ```bash
 todomd init
 ```
 
 2. Add some tasks:
-
 ```bash
 todomd add "Buy groceries @home +personal due:2025-08-10"
 todomd add "(A) Important meeting preparation @office +work"
@@ -73,13 +74,11 @@ todomd add "Call dentist for appointment"
 ```
 
 3. List your tasks:
-
 ```bash
 todomd list
 ```
 
 4. Mark tasks as complete:
-
 ```bash
 todomd done 1
 ```
