@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { Commander } from '../lib/Commander'
-import { Task } from '../types/Task'
-import { TodoParser } from '../lib/TodoParser'
+import { Commander } from '../lib/Commander.js'
+import { Task } from '../types/Task.js'
+import { TodoParser } from '../lib/TodoParser.js'
 import { parseISO, isPast } from 'date-fns'
 
 interface AppProps {
@@ -55,7 +55,12 @@ const App: React.FC<AppProps> = ({ command, args, flags, todoDir }) => {
 
   // Handle string output for messages
   if (typeof output === 'string') {
-    const color = status === 'error' ? 'red' : 'green'
+    let color = 'green'
+    if (status === 'error') {
+      color = 'magenta'
+    } else if (output.startsWith('No tasks found')) {
+      color = 'magenta'
+    }
     return <Text color={color}>{output}</Text>
   }
 

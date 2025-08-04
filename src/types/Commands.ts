@@ -27,5 +27,5 @@ export enum ValidCommands {
   ListPri = 'listpri',
   ListPriAlias = 'lsp',
   ListProj = 'listproj',
-  ListProjAlias = 'lsproj',
+  ListProjAlias = 'lsproj'
 }
