@@ -66,4 +66,25 @@ describe('list command', () => {
     expect(stdout).toContain('due:2025-12-31')
     expect(stdout).toContain('Cancelled task')
   })
+
+  test('should display a tree structure for tasks with subtasks', async () => {
+    const todoFilePath = path.join(tempDir, 'todo.md')
+    const fileContent = `- [ ] Parent task
+  - [ ] Subtask 1
+  - [ ] Subtask 2`
+    await fs.writeFile(todoFilePath, fileContent)
+
+    const { stdout } = await execPromise(`node ${cliPath} list`, {
+      env: { ...process.env, TODO_DIR: tempDir },
+    })
+
+    // Parent task should have no prefix
+    expect(stdout).toContain('Parent task')
+    expect(stdout).not.toContain('├─ Parent task')
+    expect(stdout).not.toContain('└─ Parent task')
+
+    // Subtasks should have the correct prefixes and spacing
+    expect(stdout).toContain(' ├─ Subtask 1')
+    expect(stdout).toContain(' └─ Subtask 2')
+  })
 })

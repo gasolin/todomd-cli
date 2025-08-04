@@ -132,18 +132,29 @@ const App: React.FC<AppProps> = ({ command, args, flags, todoDir }) => {
     return (
       <Box flexDirection='column'>
         {output.map((task, index) => {
-          let statusSymbol = '  ' // Default to two spaces for alignment
-          if (task.status === Status.Done) {
-            statusSymbol = '✓ '
-          } else if (task.status === Status.Cancelled) {
-            statusSymbol = '✗ '
-          } else if (task.status === Status.InProgress) {
-            statusSymbol = '~ '
+          let statusSymbol = '  ' // Default for alignment
+          if (task.status === Status.Done) statusSymbol = '✓ '
+          else if (task.status === Status.Cancelled) statusSymbol = '✗ '
+          else if (task.status === Status.InProgress) statusSymbol = '~ '
+
+          let prefix = ''
+          if (task.level > 0) {
+            const indent = '   '.repeat(task.level - 1)
+            let isLastSibling = true
+            for (let i = index + 1; i < output.length; i++) {
+              if (output[i].level < task.level) break
+              if (output[i].level === task.level) {
+                isLastSibling = false
+                break
+              }
+            }
+            const branch = isLastSibling ? '└─ ' : '├─ '
+            prefix = ` ${indent}${branch}`
           }
 
           const taskDescription = formatTaskLine(task)
           const taskNumber = String(index + 1).padStart(maxDigits, ' ')
-          const numberedTaskLine = `${taskNumber}. ${statusSymbol}${taskDescription}`
+          const numberedTaskLine = `${taskNumber}. ${statusSymbol}${prefix}${taskDescription}`
 
           let color
           if (task.status === Status.Done || task.status === Status.Cancelled) {
