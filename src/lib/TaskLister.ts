@@ -18,7 +18,11 @@ export function getListTasks(
           ? allProjects.map((p) => `+${p}`).join('\n')
           : 'No projects found.'
       }
-      return allTasks.filter((t) => t.projects?.includes(projectFilter.replace(/^\+/, '')))
+      const results = allTasks.filter((t) => t.projects?.includes(projectFilter.replace(/^\+/, '')))
+      if (results.length === 0) {
+        return `No tasks found for project "+${projectFilter}"`
+      }
+      return results
     }
     case ValidCommands.ListCon:
     case ValidCommands.ListConAlias: {
@@ -31,14 +35,22 @@ export function getListTasks(
           ? allContexts.map((c) => `@${c}`).join('\n')
           : 'No contexts found.'
       }
-      return allTasks.filter((t) => t.contexts?.includes(contextFilter.replace(/^@/, '')))
+      const results = allTasks.filter((t) => t.contexts?.includes(contextFilter.replace(/^@/, '')))
+      if (results.length === 0) {
+        return `No tasks found for context "@${contextFilter}"`
+      }
+      return results
     }
     case ValidCommands.Search: {
       const searchTerm = args.join(' ')
       if (!searchTerm) return 'Error: Please provide a search term'
-      return allTasks.filter((t) =>
+      const results = allTasks.filter((t) =>
         t.description.toLowerCase().includes(searchTerm.toLowerCase())
       )
+      if (results.length === 0) {
+        return `No tasks found matching "${searchTerm}"`
+      }
+      return results
     }
     case ValidCommands.List:
     case ValidCommands.ListAlias:

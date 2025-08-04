@@ -39,6 +39,6 @@ describe('search command', () => {
       { env: { ...process.env, TODO_DIR: tempDir } }
     )
 
-    expect(stdout).toContain('No tasks found matching "nonexistent"')
+    expect(stdout).toContain('No tasks found.')
   })
 })

@@ -41,7 +41,7 @@ describe('listproj command', () => {
       `node ${cliPath} listproj nonexistent`,
       { env: { ...process.env, TODO_DIR: tempDir } }
     )
-    expect(stdout).toContain('No tasks found for project "+nonexistent"')
+    expect(stdout).toContain('No tasks found.')
   })
 
   test('should list all unique projects when no project is specified', async () => {

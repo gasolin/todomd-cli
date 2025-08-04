@@ -3,7 +3,7 @@ import { Commander } from '../lib/Commander'
 import { Task, Status } from '../types/Task'
 import { ValidCommands } from '../types/Commands'
 import { TodoParser } from '../lib/TodoParser'
-import { parseISO, isPast } from 'date-fns'
+import { parseISO, isPast, differenceInDays } from 'date-fns'
 
 interface AppProps {
   command: string
@@ -75,6 +75,12 @@ const App: React.FC<AppProps> = ({ command, args, flags, todoDir }) => {
     return <Text color={color}>{output}</Text>
   }
 
+  const isNearDay = (dueDate: string): boolean => {
+    const nearDays = parseInt(process.env.TODO_NEAR_DAYS || '2', 10)
+    const date = parseISO(dueDate)
+    return differenceInDays(date, new Date()) <= nearDays
+  }
+
   // Handle Task[] output for lists
   if (Array.isArray(output)) {
     if (output.length === 0) {
@@ -88,11 +94,11 @@ const App: React.FC<AppProps> = ({ command, args, flags, todoDir }) => {
         {output.map((task, index) => {
           let statusSymbol = '  ' // Default to two spaces for alignment
           if (task.status === Status.Done) {
-            statusSymbol = '✓ '
+            statusSymbol = '✓ ' 
           } else if (task.status === Status.Cancelled) {
-            statusSymbol = '✗ '
+            statusSymbol = '✗ ' 
           } else if (task.status === Status.InProgress) {
-            statusSymbol = '~ '
+            statusSymbol = '~ ' 
           }
 
           const serializedTask = parser.serialize([task])
@@ -108,8 +114,13 @@ const App: React.FC<AppProps> = ({ command, args, flags, todoDir }) => {
           let color
           if (task.status === Status.Done || task.status === Status.Cancelled) {
             color = 'gray'
-          } else if (task.dueDate && isPast(parseISO(task.dueDate))) {
-            color = 'red'
+          } else if (task.dueDate) {
+            const dueDate = parseISO(task.dueDate)
+            if (isPast(dueDate)) {
+              color = 'red'
+            } else if (isNearDay(task.dueDate)) {
+              color = 'yellow'
+            }
           }
 
           // For listcon and listproj, we want to keep the default color

@@ -48,14 +48,16 @@ npm link
 
 ## Configuration
 
-Set your todo directory using environment variables:
+Set your todo directory and other options using environment variables:
 
 ```bash
 # In your shell profile (~/.bashrc, ~/.zshrc, etc.)
 export TODO_DIR="$HOME/Documents/todos"
+export TODO_NEAR_DAYS=3 # Highlight tasks due in the next 3 days (default is 2)
 
 # Or create a .env file in your project directory
 echo "TODO_DIR=/path/to/your/todos" > .env
+echo "TODO_NEAR_DAYS=3" >> .env
 ```
 
 ## Quick Start
