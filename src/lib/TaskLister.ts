@@ -12,13 +12,15 @@ export function getListTasks(
       const projectFilter = args[0]
       if (!projectFilter) {
         const allProjects = [
-          ...new Set(allTasks.flatMap((t) => t.projects || [])),
+          ...new Set(allTasks.flatMap((t) => t.projects || []))
         ]
         return allProjects.length > 0
           ? allProjects.map((p) => `+${p}`).join('\n')
           : 'No projects found.'
       }
-      const results = allTasks.filter((t) => t.projects?.includes(projectFilter.replace(/^\+/, '')))
+      const results = allTasks.filter((t) =>
+        t.projects?.includes(projectFilter.replace(/^\+/, ''))
+      )
       if (results.length === 0) {
         return `No tasks found for project "+${projectFilter}"`
       }
@@ -29,13 +31,15 @@ export function getListTasks(
       const contextFilter = args[0]
       if (!contextFilter) {
         const allContexts = [
-          ...new Set(allTasks.flatMap((t) => t.contexts || [])),
+          ...new Set(allTasks.flatMap((t) => t.contexts || []))
         ]
         return allContexts.length > 0
           ? allContexts.map((c) => `@${c}`).join('\n')
           : 'No contexts found.'
       }
-      const results = allTasks.filter((t) => t.contexts?.includes(contextFilter.replace(/^@/, '')))
+      const results = allTasks.filter((t) =>
+        t.contexts?.includes(contextFilter.replace(/^@/, ''))
+      )
       if (results.length === 0) {
         return `No tasks found for context "@${contextFilter}"`
       }

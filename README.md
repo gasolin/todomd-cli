@@ -116,7 +116,7 @@ todomd path/to/a/project/
 - `todomd priority, pri <id> <priority>` - Set task priority (A-Z)
 - `todomd project, proj <id> <project>` - Add project to task
 - `todomd context, ctx <id> <context>` - Add context to task
-- `todomd due <id> <date>` - Set due date (YYYY-MM-DD format)
+- `todomd due <id> <date>` - Set due date. Accepts `YYYY-MM-DD` and natural language like `today`, `tomorrow`, `next friday`, or `in 2 weeks` (English only).
 
 ### Search and Filter
 
@@ -171,7 +171,10 @@ todomd add "Plan vacation +personal"
 todomd search "report"
 
 # Set priority for existing task
-todomd priority 1 A
+todomd pri 1 A
+
+# Set a due date using natural language
+todomd due 1 "next tuesday"
 
 # Mark task as done
 todomd done 1

@@ -88,10 +88,10 @@ const App: React.FC<AppProps> = ({ command, args, flags, todoDir }) => {
     }
     line += task.description
     if (task.projects && task.projects.length > 0) {
-      line += ` ${task.projects.map(p => `+${p}`).join(' ')}`
+      line += ` ${task.projects.map((p) => `+${p}`).join(' ')}`
     }
     if (task.contexts && task.contexts.length > 0) {
-      line += ` ${task.contexts.map(c => `@${c}`).join(' ')}`
+      line += ` ${task.contexts.map((c) => `@${c}`).join(' ')}`
     }
     if (task.dueDate) {
       line += ` due:${task.dueDate}`
@@ -103,13 +103,27 @@ const App: React.FC<AppProps> = ({ command, args, flags, todoDir }) => {
   if (Array.isArray(output)) {
     if (output.length === 0) {
       if (command === ValidCommands.Search) {
-        return <Text color='magenta'>No tasks found matching "{args.join(' ')}"</Text>
+        return (
+          <Text color='magenta'>
+            No tasks found matching "{args.join(' ')}"
+          </Text>
+        )
       }
-      if (command === ValidCommands.ListProj || command === ValidCommands.ListProjAlias) {
-        return <Text color='magenta'>No tasks found for project "+{args[0]}"</Text>
+      if (
+        command === ValidCommands.ListProj ||
+        command === ValidCommands.ListProjAlias
+      ) {
+        return (
+          <Text color='magenta'>No tasks found for project "+{args[0]}"</Text>
+        )
       }
-      if (command === ValidCommands.ListCon || command === ValidCommands.ListConAlias) {
-        return <Text color='magenta'>No tasks found for context "@{args[0]}"</Text>
+      if (
+        command === ValidCommands.ListCon ||
+        command === ValidCommands.ListConAlias
+      ) {
+        return (
+          <Text color='magenta'>No tasks found for context "@{args[0]}"</Text>
+        )
       }
       return <Text color='magenta'>No tasks found.</Text>
     }

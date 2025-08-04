@@ -3,10 +3,46 @@ import { Task, Status } from '../src/types/Task'
 import { ValidCommands } from '../src/types/Commands'
 
 const mockTasks: Task[] = [
-  { id: 0, description: 'Task one +projA @ctxA', status: Status.Todo, level: 0, projects: ['projA'], contexts: ['ctxA'], tags: [], customAttributes: {} },
-  { id: 1, description: 'Task two +projB @ctxB', status: Status.InProgress, level: 0, projects: ['projB'], contexts: ['ctxB'], tags: [], customAttributes: {} },
-  { id: 2, description: 'Task three +projA @ctxB', status: Status.Done, level: 0, projects: ['projA'], contexts: ['ctxB'], tags: [], customAttributes: {} },
-  { id: 3, description: 'Task four +projC @ctxA', status: Status.Cancelled, level: 0, projects: ['projC'], contexts: ['ctxA'], tags: [], customAttributes: {} },
+  {
+    id: 0,
+    description: 'Task one +projA @ctxA',
+    status: Status.Todo,
+    level: 0,
+    projects: ['projA'],
+    contexts: ['ctxA'],
+    tags: [],
+    customAttributes: {}
+  },
+  {
+    id: 1,
+    description: 'Task two +projB @ctxB',
+    status: Status.InProgress,
+    level: 0,
+    projects: ['projB'],
+    contexts: ['ctxB'],
+    tags: [],
+    customAttributes: {}
+  },
+  {
+    id: 2,
+    description: 'Task three +projA @ctxB',
+    status: Status.Done,
+    level: 0,
+    projects: ['projA'],
+    contexts: ['ctxB'],
+    tags: [],
+    customAttributes: {}
+  },
+  {
+    id: 3,
+    description: 'Task four +projC @ctxA',
+    status: Status.Cancelled,
+    level: 0,
+    projects: ['projC'],
+    contexts: ['ctxA'],
+    tags: [],
+    customAttributes: {}
+  }
 ]
 
 describe('TaskLister', () => {

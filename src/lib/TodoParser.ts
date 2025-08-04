@@ -27,7 +27,6 @@ export class TodoParser {
     return tasks
   }
 
-
   private isTaskLine(line: string): boolean {
     const trimmed = line.trim()
     return /^-\s*\[([ x~-])\]/.test(trimmed)
@@ -147,22 +146,22 @@ export class TodoParser {
 
   serialize(tasks: Task[], forArchive: boolean = false): string {
     if (forArchive) {
-      return tasks.map(task => this.serializeTask(task)).join('\n');
+      return tasks.map((task) => this.serializeTask(task)).join('\n')
     }
 
-    const updatedLines = [...this.rawLines];
-    let taskIndex = 0;
+    const updatedLines = [...this.rawLines]
+    let taskIndex = 0
     for (let i = 0; i < updatedLines.length; i++) {
       if (this.isTaskLine(updatedLines[i])) {
-        const task = tasks[taskIndex];
+        const task = tasks[taskIndex]
         if (task && task.lineNumber === i) {
-          updatedLines[i] = this.serializeTask(task);
-          taskIndex++;
+          updatedLines[i] = this.serializeTask(task)
+          taskIndex++
         }
       }
     }
 
-    return updatedLines.join('\n');
+    return updatedLines.join('\n')
   }
 
   private serializeTask(task: Task): string {
@@ -216,6 +215,6 @@ export class TodoParser {
     if (metadata.length > 0) {
       taskLine += ' ' + metadata.join(' ')
     }
-    return taskLine;
+    return taskLine
   }
 }

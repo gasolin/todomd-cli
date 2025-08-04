@@ -6,6 +6,26 @@ import fs from 'fs/promises'
 import path from 'path'
 import { spawn } from 'child_process'
 import os from 'os'
+import {
+  format,
+  addDays,
+  addWeeks,
+  addMonths,
+  addYears,
+  nextDay,
+  parseISO,
+  Day
+} from 'date-fns'
+
+const dayMap: Record<string, Day> = {
+  sunday: 0,
+  monday: 1,
+  tuesday: 2,
+  wednesday: 3,
+  thursday: 4,
+  friday: 5,
+  saturday: 6
+}
 
 export class Commander {
   private todoDir: string
@@ -150,13 +170,55 @@ export class Commander {
 
       case ValidCommands.Due: {
         const id = parseInt(effectiveArgs[0])
-        const date = effectiveArgs[1]
+        const dateArg = effectiveArgs.slice(1).join(' ').toLowerCase()
         if (isNaN(id) || !tasks[id - 1]) return 'Error: Invalid task ID'
-        if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
-          return 'Error: Date must be in YYYY-MM-DD format'
+        if (!dateArg) return 'Error: Please provide a date'
+
+        let dueDate: Date | null = null
+        const now = new Date()
+
+        // YYYY-MM-DD
+        if (/^\d{4}-\d{2}-\d{2}$/.test(dateArg)) {
+          try {
+            dueDate = parseISO(dateArg)
+          } catch (e) {
+            /* ignore */
+          }
+        } else if (dateArg === 'today') {
+          dueDate = now
+        } else if (dateArg === 'tomorrow') {
+          dueDate = addDays(now, 1)
+        } else if (dateArg === 'yesterday') {
+          dueDate = addDays(now, -1)
+        } else {
+          const relativeMatch = dateArg.match(
+            /in (\d+) (day|week|month|year)s?/
+          )
+          if (relativeMatch) {
+            const amount = parseInt(relativeMatch[1])
+            const unit = relativeMatch[2]
+            if (unit === 'day') dueDate = addDays(now, amount)
+            if (unit === 'week') dueDate = addWeeks(now, amount)
+            if (unit === 'month') dueDate = addMonths(now, amount)
+            if (unit === 'year') dueDate = addYears(now, amount)
+          } else {
+            const nextDayMatch = dateArg.match(
+              /next (sunday|monday|tuesday|wednesday|thursday|friday|saturday)/
+            )
+            if (nextDayMatch) {
+              const dayName = nextDayMatch[1]
+              dueDate = nextDay(now, dayMap[dayName])
+            }
+          }
         }
-        await todoManager.updateTask(id - 1, { dueDate: date })
-        return `Due date for task ${id} set to ${date}`
+
+        if (!dueDate) {
+          return 'Error: Date must be in YYYY-MM-DD format or a supported keyword (today, tomorrow, next friday, in 2 weeks, etc.)'
+        }
+
+        const formattedDate = format(dueDate, 'yyyy-MM-dd')
+        await todoManager.updateTask(id - 1, { dueDate: formattedDate })
+        return `Due date for task ${id} set to ${formattedDate}`
       }
 
       case ValidCommands.Search:

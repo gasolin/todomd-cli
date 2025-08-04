@@ -21,7 +21,10 @@ export class TodoManager {
     this.parser = new TodoParser()
   }
 
-  private async appendContent(filePath: string, contentToAppend: string): Promise<void> {
+  private async appendContent(
+    filePath: string,
+    contentToAppend: string
+  ): Promise<void> {
     let currentContent = ''
     try {
       currentContent = await fs.readFile(filePath, 'utf8')
@@ -171,7 +174,7 @@ export class TodoManager {
 
     // Serialize only the completed tasks for archiving
     const completedContent = this.parser.serialize(completedTasks, true)
-    
+
     // Append to done.md using the new helper
     await this.appendContent(this.doneFile, completedContent)
 

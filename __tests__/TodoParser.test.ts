@@ -111,13 +111,14 @@ describe('TodoParser', () => {
       const simpleTaskContent = '- [x] Finish report'
       const parser = new TodoParser()
       const tasks = parser.parse(simpleTaskContent)
-      
+
       const result = parser.serialize(tasks)
       expect(result.trim()).toBe(simpleTaskContent)
     })
 
     test('should serialize a complex task with all metadata', () => {
-      const complexTaskContent = '- [~] (A) Review the proposal +project-x @office #review cr:2025-07-28 due:2025-08-15 rec:2w estimated:4h'
+      const complexTaskContent =
+        '- [~] (A) Review the proposal +project-x @office #review cr:2025-07-28 due:2025-08-15 rec:2w estimated:4h'
       const parser = new TodoParser()
       const tasks = parser.parse(complexTaskContent)
 
