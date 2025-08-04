@@ -1,6 +1,7 @@
 import { TodoManager } from './TodoManager'
 import { Task, Status } from '../types/Task'
 import { ValidCommands } from '../types/Commands'
+import { getListTasks } from './TaskLister'
 import fs from 'fs/promises'
 import path from 'path'
 import { spawn } from 'child_process'
@@ -158,16 +159,14 @@ export class Commander {
         return `Due date for task ${id} set to ${date}`
       }
 
-      case ValidCommands.Search: {
-        const searchTerm = effectiveArgs.join(' ')
-        if (!searchTerm) return 'Error: Please provide a search term'
-        const results = tasks.filter((t) =>
-          t.description.toLowerCase().includes(searchTerm.toLowerCase())
-        )
-        if (results.length === 0)
-          return `No tasks found matching "${searchTerm}"`
-        return results
-      }
+      case ValidCommands.Search:
+      case ValidCommands.List:
+      case ValidCommands.ListAlias:
+      case ValidCommands.ListCon:
+      case ValidCommands.ListConAlias:
+      case ValidCommands.ListProj:
+      case ValidCommands.ListProjAlias:
+        return getListTasks(effectiveCommand, effectiveArgs, tasks)
 
       case ValidCommands.Edit:
       case ValidCommands.EditAlias: {
@@ -180,42 +179,6 @@ export class Commander {
         })
       }
 
-      case ValidCommands.ListCon:
-      case ValidCommands.ListConAlias: {
-        const contextFilter = effectiveArgs[0]
-        if (!contextFilter) {
-          const allContexts = [
-            ...new Set(tasks.flatMap((t) => t.contexts || []))
-          ]
-          return allContexts.length > 0
-            ? allContexts.map((c) => `@${c}`).join('\n')
-            : 'No contexts found.'
-        }
-        const results = tasks.filter((t) => t.contexts?.includes(contextFilter))
-        if (results.length === 0)
-          return `No tasks found for context "@${contextFilter}"`
-        return results
-      }
-
-      case ValidCommands.ListProj:
-      case ValidCommands.ListProjAlias: {
-        const projectFilter = effectiveArgs[0]
-        if (!projectFilter) {
-          const allProjects = [
-            ...new Set(tasks.flatMap((t) => t.projects || []))
-          ]
-          return allProjects.length > 0
-            ? allProjects.map((p) => `+${p}`).join('\n')
-            : 'No projects found.'
-        }
-        const results = tasks.filter((t) => t.projects?.includes(projectFilter))
-        if (results.length === 0)
-          return `No tasks found for project "+${projectFilter}"`
-        return results
-      }
-
-      case ValidCommands.List:
-      case ValidCommands.ListAlias:
       default:
         return tasks
     }
