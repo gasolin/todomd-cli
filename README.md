@@ -117,7 +117,7 @@ todomd path/to/a/project/
 
 ### Basic Operations
 
-- `todomd list, ls` - List all tasks (including completed and cancelled)
+- `todomd list, ls [search terms]` - List all tasks, or filter by search terms.
 - `todomd add, a <task>` - Add a new task
 - `todomd done, do <id>` - Mark task as completed
 - `todomd undone, ud <id>` - Mark task as incomplete
@@ -130,10 +130,6 @@ todomd path/to/a/project/
 - `todomd project, proj <id> <project>` - Add project to task
 - `todomd context, ctx <id> <context>` - Add context to task
 - `todomd due <id> <date>` - Set due date. Accepts `YYYY-MM-DD` and natural language like `today`, `tomorrow`, `friday` (next upcoming), `this friday` (within this week), `next friday` (in the following week), or `in 2 weeks` (English only).
-
-### Search and Filter
-
-- `todomd search <term>` - Search tasks by description
 
 ### Setup
 
@@ -180,8 +176,8 @@ todomd add "Plan vacation +personal"
 #     - [ ] Book flights
 #     - [ ] Reserve hotel
 
-# Search for specific tasks
-todomd search "report"
+# Search for tasks
+todomd list "report"
 
 # Set priority for existing task
 todomd pri 1 A

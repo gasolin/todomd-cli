@@ -248,9 +248,13 @@ export class Commander {
         return `Due date for task ${id} set to ${formattedDate}`
       }
 
-      case ValidCommands.Search:
       case ValidCommands.List:
       case ValidCommands.ListAlias:
+        if (effectiveArgs.length > 0) {
+          return getListTasks(ValidCommands.Search, effectiveArgs, tasks)
+        }
+        return getListTasks(effectiveCommand, effectiveArgs, tasks)
+      
       case ValidCommands.ListCon:
       case ValidCommands.ListConAlias:
       case ValidCommands.ListProj:

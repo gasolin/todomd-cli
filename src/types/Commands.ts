@@ -21,7 +21,6 @@ export enum ValidCommands {
   Context = 'context',
   ContextAlias = 'ctx',
   Due = 'due',
-  Search = 'search',
   Edit = 'edit',
   EditAlias = 'e',
   EditAliasReplace = 'replace',
