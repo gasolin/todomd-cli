@@ -2,6 +2,10 @@
 
 A command-line tool for managing todomd format files, inspired by todo.txt-cli but designed specifically for the todomd specification that combines Markdown with todo.txt features.
 
+<img width="439" height="316" alt="Image" src="https://github.com/user-attachments/assets/e19b4488-95ff-41a4-97cb-0a8cae0d7559" />
+
+(origin markdown from [todo_sample.md](https://github.com/gasolin/todomd/blob/main/todo_sample.md) )
+
 ## Features
 
 - 📝 **Markdown Native**: Uses standard Markdown task list syntax
