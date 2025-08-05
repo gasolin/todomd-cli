@@ -1,4 +1,4 @@
-import { exec } from 'child_process'
+import { exec, spawn } from 'child_process'
 import { promisify } from 'util'
 import path from 'path'
 import fs from 'fs/promises'
@@ -29,5 +29,32 @@ export async function addTask(dir: string, task: string): Promise<any> {
 export async function listTasks(dir: string): Promise<any> {
   return execPromise(`node ${cliPath} list`, {
     env: { ...process.env, TODO_DIR: dir }
+  })
+}
+
+export function execPromiseWithSpawn(
+  command: string,
+  options: any
+): Promise<{ stdout: string; stderr: string }> {
+  return new Promise((resolve, reject) => {
+    const [cmd, ...args] = command.split(' ')
+    const child = spawn(cmd, args, options)
+    let stdout = ''
+    let stderr = ''
+
+    child.stdout.on('data', (data) => {
+      stdout += data.toString()
+    })
+
+    child.stderr.on('data', (data) => {
+      stderr += data.toString()
+    })
+
+    child.on('close', (code) => {
+      if (code !== 0) {
+        reject(new Error(`Command failed with code ${code}: ${stderr}`))
+      }
+      resolve({ stdout, stderr })
+    })
   })
 }

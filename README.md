@@ -87,7 +87,6 @@ echo "- DONE $TASK_DESCRIPTION" >> "$JOURNAL_FILE"
 You would then set `TODO_CMD_WHEN_DONE` in your `.env` file:
 `TODO_CMD_WHEN_DONE=~/tools/append_journal.sh`
 
-
 ## Quick Start
 
 1. Initialize a new todomd directory:

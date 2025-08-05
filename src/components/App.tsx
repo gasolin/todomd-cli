@@ -163,12 +163,6 @@ const App: React.FC<AppProps> = ({ command, args, flags, todoDir }) => {
           let color
           if (task.status === Status.Done || task.status === Status.Cancelled) {
             color = 'gray'
-          } else if (task.priority === 'A') {
-            color = '#FFFF99'
-          } else if (task.priority === 'B') {
-            color = '#90EE90'
-          } else if (task.priority === 'C') {
-            color = '#ADD8E6'
           } else if (task.dueDate) {
             const dueDate = parseISO(task.dueDate)
             if (isPast(dueDate)) {
@@ -176,6 +170,12 @@ const App: React.FC<AppProps> = ({ command, args, flags, todoDir }) => {
             } else if (isNearDay(task.dueDate)) {
               color = '#FFD580'
             }
+          } else if (task.priority === 'A') {
+            color = '#FFFF99'
+          } else if (task.priority === 'B') {
+            color = '#90EE90'
+          } else if (task.priority === 'C') {
+            color = '#ADD8E6'
           }
 
           // For listcon and listproj, we want to keep the default color

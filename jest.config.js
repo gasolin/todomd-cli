@@ -2,9 +2,6 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
-  moduleNameMapper: {
-    '^(\.{1,2}/.*)\.js$': '$1'
-  },
   testPathIgnorePatterns: ['/node_modules/', '/dist/', '__tests__/helpers.ts'],
   transform: {
     '^.+\.tsx?$': [
@@ -12,6 +9,7 @@ module.exports = {
       {
         tsconfig: 'tsconfig.json'
       }
-    ]
+    ],
+    '^.+\.js$': 'babel-jest'
   }
 }
