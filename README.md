@@ -73,6 +73,21 @@ echo "Task completed: $TASK_DESCRIPTION" >> ~/task_log.txt
 # Or send a notification, etc.
 ```
 
+Another example is to append the completed task to your daily note in Logseq, using a script like [append_journal.sh](./tools/append_journal.sh) in tools folder:
+
+```sh
+#!/bin/bash
+# tools/append_journal.sh
+# This script appends the content of TASK_DESCRIPTION to today's Logseq journal.
+LOGSEQ_DIR="~/Documents/Logseq"
+JOURNAL_FILE="$LOGSEQ_DIR/journals/$(date +'%Y_%m_%d').md"
+echo "- DONE $TASK_DESCRIPTION" >> "$JOURNAL_FILE"
+```
+
+You would then set `TODO_CMD_WHEN_DONE` in your `.env` file:
+`TODO_CMD_WHEN_DONE=~/tools/append_journal.sh`
+
+
 ## Quick Start
 
 1. Initialize a new todomd directory:
