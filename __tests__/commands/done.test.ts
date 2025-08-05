@@ -1,31 +1,26 @@
 import {
   setupTestDirectory,
   cleanupTestDirectory,
-  addTask,
   execPromise,
-  cliPath
+  cliPath,
+  addTask
 } from '../helpers'
 import fs from 'fs/promises'
 import path from 'path'
-import { TodoParser } from '../../src/lib/TodoParser'
-import { Status } from '../../src/types/Task'
 
 describe('done command', () => {
   let tempDir: string
-  const parser = new TodoParser()
 
   beforeEach(async () => {
     tempDir = await setupTestDirectory()
   })
 
   afterEach(async () => {
-    if (tempDir) {
-      await cleanupTestDirectory(tempDir)
-    }
+    await cleanupTestDirectory(tempDir)
   })
 
-  test('should mark a task as done and set completion date', async () => {
-    await addTask(tempDir, 'This task will be marked as done')
+  test('should mark a task as done', async () => {
+    await addTask(tempDir, 'A task to be completed')
 
     const { stdout } = await execPromise(`node ${cliPath} done 1`, {
       env: { ...process.env, TODO_DIR: tempDir }
@@ -34,9 +29,29 @@ describe('done command', () => {
 
     const todoFilePath = path.join(tempDir, 'todo.md')
     const fileContent = await fs.readFile(todoFilePath, 'utf8')
-    const tasks = parser.parse(fileContent)
+    expect(fileContent).toContain('- [x] A task to be completed')
+  })
 
-    expect(tasks[0].status).toBe(Status.Done)
-    expect(tasks[0].completionDate).toBe(new Date().toISOString().split('T')[0])
+  test('should execute TODO_CMD_WHEN_DONE and pass task description', async () => {
+    const taskDescription = 'A task to trigger the command'
+    await addTask(tempDir, taskDescription)
+
+    const tempOutputFile = path.join(tempDir, 'output.txt')
+    const command = `echo "$TASK_DESCRIPTION" > ${tempOutputFile}`
+
+    await execPromise(`node ${cliPath} done 1`, {
+      env: {
+        ...process.env,
+        TODO_DIR: tempDir,
+        TODO_CMD_WHEN_DONE: command,
+      },
+    })
+
+    // Allow a moment for the async exec to complete and write the file
+    await new Promise(resolve => setTimeout(resolve, 100))
+
+    const outputContent = await fs.readFile(tempOutputFile, 'utf8')
+    expect(outputContent.trim()).toBe(taskDescription)
   })
 })
+

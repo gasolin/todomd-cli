@@ -58,6 +58,19 @@ export TODO_NEAR_DAYS=3 # Highlight tasks due in the next 3 days (default is 2)
 # Or create a .env file in your project directory
 echo "TODO_DIR=/path/to/your/todos" > .env
 echo "TODO_NEAR_DAYS=3" >> .env
+echo "TODO_CMD_WHEN_DONE=~/bin/task_done_notify" >> .env
+```
+
+### `TODO_CMD_WHEN_DONE`
+
+You can specify a command to be executed whenever a task is marked as done. The description of the completed task will be passed to the command via the `TASK_DESCRIPTION` environment variable.
+
+Example script `~/bin/task_done_notify`:
+
+```sh
+#!/bin/bash
+echo "Task completed: $TASK_DESCRIPTION" >> ~/task_log.txt
+# Or send a notification, etc.
 ```
 
 ## Quick Start

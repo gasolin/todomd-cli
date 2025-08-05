@@ -4,7 +4,7 @@ import { ValidCommands } from '../types/Commands'
 import { getListTasks } from './TaskLister'
 import fs from 'fs/promises'
 import path from 'path'
-import { spawn } from 'child_process'
+import { spawn, exec } from 'child_process'
 import os from 'os'
 import {
   format,
@@ -93,7 +93,20 @@ export class Commander {
       case ValidCommands.DoneAlias: {
         const id = parseInt(effectiveArgs[0])
         if (isNaN(id) || !tasks[id - 1]) return 'Error: Invalid task ID'
+        
+        const task = tasks[id - 1]
         await todoManager.updateTask(id - 1, { status: Status.Done })
+
+        const doneCommand = process.env.TODO_CMD_WHEN_DONE
+        if (doneCommand) {
+          const env = { ...process.env, TASK_DESCRIPTION: task.description }
+          exec(doneCommand, { env }, (err: Error | null, stdout: string, stderr: string) => {
+            if (err) {
+              // In a CLI, we might want to log this to stderr, but for now, we'll ignore it
+            }
+          })
+        }
+
         return 'Task completed'
       }
 
