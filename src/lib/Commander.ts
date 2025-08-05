@@ -28,6 +28,9 @@ const dayMap: Record<string, Day> = {
   saturday: 6
 }
 
+import { promisify } from 'util'
+const execAsync = promisify(exec)
+
 export class Commander {
   private todoDir: string
   private todoFile: string | undefined
@@ -100,16 +103,15 @@ export class Commander {
 
         const doneCommand = process.env.TODO_CMD_WHEN_DONE
         if (doneCommand) {
-          const env = { ...process.env, TASK_DESCRIPTION: task.description }
-          exec(
-            doneCommand,
-            { env },
-            (err: Error | null, stdout: string, stderr: string) => {
-              if (err) {
-                // In a CLI, we might want to log this to stderr, but for now, we'll ignore it
-              }
-            }
-          )
+          try {
+            const env = { ...process.env, TASK_DESCRIPTION: task.description }
+            await execAsync(doneCommand, { env })
+          } catch (error: any) {
+            // Return the error from the script to the user
+            return `Error executing TODO_CMD_WHEN_DONE: ${
+              error.stderr || error.message
+            }`
+          }
         }
 
         return 'Task completed'
