@@ -24,6 +24,7 @@ export enum ValidCommands {
   Search = 'search',
   Edit = 'edit',
   EditAlias = 'e',
+  EditAliasReplace = 'replace',
   List = 'list',
   ListAlias = 'ls',
   ListCon = 'listcon',

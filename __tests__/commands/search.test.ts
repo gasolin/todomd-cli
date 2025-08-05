@@ -41,4 +41,12 @@ describe('search command', () => {
 
     expect(stdout).toContain('No tasks found matching "nonexistent"')
   })
+
+  test('should find tasks with Chinese characters', async () => {
+    await addTask(tempDir, '一個包含中文的任務')
+    const { stdout } = await execPromise(`node ${cliPath} search "中文"`, {
+      env: { ...process.env, TODO_DIR: tempDir },
+    })
+    expect(stdout).toContain('一個包含中文的任務')
+  })
 })

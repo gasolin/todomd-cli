@@ -22,7 +22,7 @@ A command-line tool for managing todomd format files, inspired by todo.txt-cli b
 - [x] `done, do <id>` - Mark a task as completed
 - [x] `undone, ud <id>` - Mark task as incomplete
 - [x] `delete, rm, del <id>` - Delete a task
-- [ ] `edit <id>` - Edit a task interactively
+- [x] `edit <id> <new description>` - Edit a task's description
 - [x] `priority, pri <id> <priority>` - Set task priority
 - [x] `project, proj <id> <project>` - Add a project to a task
 - [x] `context, ctx <id> <context>` - Add a context to a task
@@ -125,7 +125,7 @@ todomd path/to/a/project/
 
 ### Task Management
 
-- `todomd edit <id>` - Edit a task interactively
+- `todomd edit, e, replace <id> <new description>` - Edit a task's description
 - `todomd priority, pri <id> <priority>` - Set task priority (A-Z)
 - `todomd project, proj <id> <project>` - Add project to task
 - `todomd context, ctx <id> <context>` - Add context to task

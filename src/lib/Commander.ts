@@ -258,18 +258,22 @@ export class Commander {
         return getListTasks(effectiveCommand, effectiveArgs, tasks)
 
       case ValidCommands.Edit:
-      case ValidCommands.EditAlias: {
-        const editor =
-          process.env.EDITOR || (os.platform() === 'win32' ? 'notepad' : 'vim')
-        const todoFilePath = todoManager.getTodoFilePath()
-        const child = spawn(editor, [todoFilePath], { stdio: 'inherit' })
-        return new Promise((resolve) => {
-          child.on('exit', () => resolve('Editor closed.'))
-        })
+      case ValidCommands.EditAlias:
+      case ValidCommands.EditAliasReplace: {
+        const id = parseInt(effectiveArgs[0])
+        const newDescription = effectiveArgs.slice(1).join(' ')
+        if (isNaN(id) || !tasks[id - 1]) {
+          return 'Error: Invalid task ID'
+        }
+        if (!newDescription) {
+          return 'Error: Please provide a new description for the task'
+        }
+        await todoManager.updateTask(id - 1, { description: newDescription })
+        return 'Task updated successfully'
       }
 
       default:
-        return tasks
+        return getListTasks(effectiveCommand, effectiveArgs, tasks)
     }
   }
 }

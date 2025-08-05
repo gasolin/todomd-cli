@@ -2,7 +2,8 @@ import {
   setupTestDirectory,
   cleanupTestDirectory,
   execPromise,
-  cliPath
+  cliPath,
+  addTask,
 } from '../helpers'
 import fs from 'fs/promises'
 import path from 'path'
@@ -154,5 +155,18 @@ describe('Command Aliases', () => {
       env: { ...process.env, TODO_DIR: tempDir }
     })
     expect(stdout).toContain('A task for lsproj +work')
+  })
+
+  test('alias "replace" should work for "edit"', async () => {
+    await addTask(tempDir, 'A task to be replaced')
+    const { stdout } = await execPromise(
+      `node ${cliPath} replace 1 "This is the new content"`,
+      {
+        env: { ...process.env, TODO_DIR: tempDir },
+      }
+    )
+    expect(stdout).toContain('Task updated successfully')
+    const fileContent = await fs.readFile(path.join(tempDir, 'todo.md'), 'utf8')
+    expect(fileContent).toContain('This is the new content')
   })
 })
