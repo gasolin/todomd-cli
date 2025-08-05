@@ -80,7 +80,7 @@ describe('list command', () => {
     await fs.writeFile(todoFilePath, fileContent)
 
     const { stdout } = await execPromise(`node ${cliPath} list`, {
-      env: { ...process.env, TODO_DIR: tempDir },
+      env: { ...process.env, TODO_DIR: tempDir }
     })
 
     // Parent task should have no prefix

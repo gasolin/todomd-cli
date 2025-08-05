@@ -14,7 +14,8 @@ import {
   addYears,
   nextDay,
   parseISO,
-  Day
+  Day,
+  setDay
 } from 'date-fns'
 
 const dayMap: Record<string, Day> = {
@@ -93,18 +94,22 @@ export class Commander {
       case ValidCommands.DoneAlias: {
         const id = parseInt(effectiveArgs[0])
         if (isNaN(id) || !tasks[id - 1]) return 'Error: Invalid task ID'
-        
+
         const task = tasks[id - 1]
         await todoManager.updateTask(id - 1, { status: Status.Done })
 
         const doneCommand = process.env.TODO_CMD_WHEN_DONE
         if (doneCommand) {
           const env = { ...process.env, TASK_DESCRIPTION: task.description }
-          exec(doneCommand, { env }, (err: Error | null, stdout: string, stderr: string) => {
-            if (err) {
-              // In a CLI, we might want to log this to stderr, but for now, we'll ignore it
+          exec(
+            doneCommand,
+            { env },
+            (err: Error | null, stdout: string, stderr: string) => {
+              if (err) {
+                // In a CLI, we might want to log this to stderr, but for now, we'll ignore it
+              }
             }
-          })
+          )
         }
 
         return 'Task completed'
@@ -215,12 +220,21 @@ export class Commander {
             if (unit === 'month') dueDate = addMonths(now, amount)
             if (unit === 'year') dueDate = addYears(now, amount)
           } else {
-            const nextDayMatch = dateArg.match(
-              /next (sunday|monday|tuesday|wednesday|thursday|friday|saturday)/
+            const dayMatch = dateArg.match(
+              /^(this |next )?(sunday|monday|tuesday|wednesday|thursday|friday|saturday)/
             )
-            if (nextDayMatch) {
-              const dayName = nextDayMatch[1]
-              dueDate = nextDay(now, dayMap[dayName])
+            if (dayMatch) {
+              const modifier = dayMatch[1]?.trim()
+              const dayName = dayMatch[2]
+              const day = dayMap[dayName]
+
+              if (modifier === 'this') {
+                dueDate = setDay(now, day)
+              } else if (modifier === 'next') {
+                dueDate = setDay(addWeeks(now, 1), day)
+              } else {
+                dueDate = nextDay(now, day)
+              }
             }
           }
         }

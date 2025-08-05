@@ -58,6 +58,33 @@ describe('due command', () => {
     expect(stdout).toMatch(/Due date for task 1 set to \d{4}-\d{2}-\d{2}/)
   })
 
+  test('should set due date with "saturday" (weekday only)', async () => {
+    const { stdout } = await execPromise(`node ${cliPath} due 1 "saturday"`, {
+      env: { ...process.env, TODO_DIR: tempDir }
+    })
+    expect(stdout).toMatch(/Due date for task 1 set to \d{4}-\d{2}-\d{2}/)
+  })
+
+  test('should set due date with "this saturday"', async () => {
+    const { stdout } = await execPromise(
+      `node ${cliPath} due 1 "this saturday"`,
+      {
+        env: { ...process.env, TODO_DIR: tempDir }
+      }
+    )
+    expect(stdout).toMatch(/Due date for task 1 set to \d{4}-\d{2}-\d{2}/)
+  })
+
+  test('should set due date with "next saturday"', async () => {
+    const { stdout } = await execPromise(
+      `node ${cliPath} due 1 "next saturday"`,
+      {
+        env: { ...process.env, TODO_DIR: tempDir }
+      }
+    )
+    expect(stdout).toMatch(/Due date for task 1 set to \d{4}-\d{2}-\d{2}/)
+  })
+
   test('should show error for invalid date format', async () => {
     const { stdout } = await execPromise(
       `node ${cliPath} due 1 "invalid-date"`,

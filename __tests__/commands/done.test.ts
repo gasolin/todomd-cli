@@ -43,15 +43,14 @@ describe('done command', () => {
       env: {
         ...process.env,
         TODO_DIR: tempDir,
-        TODO_CMD_WHEN_DONE: command,
-      },
+        TODO_CMD_WHEN_DONE: command
+      }
     })
 
     // Allow a moment for the async exec to complete and write the file
-    await new Promise(resolve => setTimeout(resolve, 100))
+    await new Promise((resolve) => setTimeout(resolve, 100))
 
     const outputContent = await fs.readFile(tempOutputFile, 'utf8')
     expect(outputContent.trim()).toBe(taskDescription)
   })
 })
-

@@ -181,10 +181,15 @@ const App: React.FC<AppProps> = ({ command, args, flags, todoDir }) => {
         })}
         <Box marginTop={1}>
           <Text>
-            --
-            TODO: {output.filter(t => t.status === Status.Todo || t.status === Status.InProgress).length}
+            -- TODO:{' '}
+            {
+              output.filter(
+                (t) =>
+                  t.status === Status.Todo || t.status === Status.InProgress
+              ).length
+            }
             {' | '}
-            DONE: {output.filter(t => t.status === Status.Done).length}
+            DONE: {output.filter((t) => t.status === Status.Done).length}
             {' | '}
             TOTAL: {output.length}
           </Text>

@@ -129,7 +129,7 @@ todomd path/to/a/project/
 - `todomd priority, pri <id> <priority>` - Set task priority (A-Z)
 - `todomd project, proj <id> <project>` - Add project to task
 - `todomd context, ctx <id> <context>` - Add context to task
-- `todomd due <id> <date>` - Set due date. Accepts `YYYY-MM-DD` and natural language like `today`, `tomorrow`, `next friday`, or `in 2 weeks` (English only).
+- `todomd due <id> <date>` - Set due date. Accepts `YYYY-MM-DD` and natural language like `today`, `tomorrow`, `friday` (next upcoming), `this friday` (within this week), `next friday` (in the following week), or `in 2 weeks` (English only).
 
 ### Search and Filter
 
