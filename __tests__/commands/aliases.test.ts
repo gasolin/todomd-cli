@@ -3,7 +3,7 @@ import {
   cleanupTestDirectory,
   execPromise,
   cliPath,
-  addTask,
+  addTask
 } from '../helpers'
 import fs from 'fs/promises'
 import path from 'path'
@@ -162,7 +162,7 @@ describe('Command Aliases', () => {
     const { stdout } = await execPromise(
       `node ${cliPath} replace 1 "This is the new content"`,
       {
-        env: { ...process.env, TODO_DIR: tempDir },
+        env: { ...process.env, TODO_DIR: tempDir }
       }
     )
     expect(stdout).toContain('Task updated successfully')

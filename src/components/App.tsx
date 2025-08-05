@@ -102,7 +102,11 @@ const App: React.FC<AppProps> = ({ command, args, flags, todoDir }) => {
   // Handle Task[] output for lists
   if (Array.isArray(output)) {
     if (output.length === 0) {
-      if (command === ValidCommands.Search) {
+      if (
+        (command === ValidCommands.List ||
+          command === ValidCommands.ListAlias) &&
+        args.length > 0
+      ) {
         return (
           <Text color='magenta'>
             No tasks found matching "{args.join(' ')}"

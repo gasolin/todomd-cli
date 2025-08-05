@@ -19,8 +19,7 @@ const cli = meow(
     $ todomd [path/to/your/todo.md] <command> [options]
 
   Commands
-    list, ls                      List all tasks
-    listall, lsa                  List all tasks (including completed and cancelled)
+    list, ls [search terms]       List all tasks, or filter by search terms
     listcon, lsc <context>        List tasks by context
     listpri, lsp <priority>       List tasks by priority
     listproj, lsproj <project>    List tasks by project
@@ -32,7 +31,6 @@ const cli = meow(
     priority, pri <id> <priority> Set task priority
     project, proj <task> <project> Add project to task
     context, ctx <task> <context>   Add context to task
-    search <term>                 Search tasks
     due <id> <date>               Set due date
     init                          Initialize todomd directory
     archive                       Archive completed tasks
@@ -46,12 +44,16 @@ const cli = meow(
   Examples
     $ todomd add "Buy groceries @home +personal"
     $ todomd my-project/todo.md add "A new task for my project"
+
+  Spec Reference
+    https://github.com/gasolin/todomd/blob/main/spec.md
   `,
   {
     importMeta: { url: pathToFileURL(__filename).href },
     flags: {
       file: { type: 'string', shortFlag: 'f' },
-      doneFile: { type: 'string' }
+      doneFile: { type: 'string' },
+      help: { type: 'boolean', shortFlag: 'h' }
     }
   } as any
 )

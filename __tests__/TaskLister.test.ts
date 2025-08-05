@@ -98,7 +98,7 @@ describe('TaskLister', () => {
   })
 
   test('should search tasks by term', () => {
-    const result = getListTasks(ValidCommands.Search, ['two'], mockTasks)
+    const result = getListTasks('search', ['two'], mockTasks)
     expect(Array.isArray(result)).toBe(true)
     const tasks = result as Task[]
     expect(tasks).toHaveLength(1)

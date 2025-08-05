@@ -45,7 +45,7 @@ export function getListTasks(
       }
       return results
     }
-    case ValidCommands.Search: {
+    case 'search': {
       const searchTerm = args.join(' ')
       if (!searchTerm) return 'Error: Please provide a search term'
       const results = allTasks.filter((t) =>

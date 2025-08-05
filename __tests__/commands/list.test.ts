@@ -112,7 +112,7 @@ describe('list command with search term', () => {
     await addTask(tempDir, 'Another task')
 
     const { stdout } = await execPromise(`node ${cliPath} list "special"`, {
-      env: { ...process.env, TODO_DIR: tempDir },
+      env: { ...process.env, TODO_DIR: tempDir }
     })
 
     expect(stdout).toContain('A special task to find')
@@ -122,10 +122,9 @@ describe('list command with search term', () => {
   test('should show a message if no tasks match', async () => {
     await addTask(tempDir, 'A task')
 
-    const { stdout } = await execPromise(
-      `node ${cliPath} list "nonexistent"`,
-      { env: { ...process.env, TODO_DIR: tempDir } }
-    )
+    const { stdout } = await execPromise(`node ${cliPath} list "nonexistent"`, {
+      env: { ...process.env, TODO_DIR: tempDir }
+    })
 
     expect(stdout).toContain('No tasks found matching "nonexistent"')
   })
@@ -133,7 +132,7 @@ describe('list command with search term', () => {
   test('should find tasks with Chinese characters', async () => {
     await addTask(tempDir, '一個包含中文的任務')
     const { stdout } = await execPromise(`node ${cliPath} list "中文"`, {
-      env: { ...process.env, TODO_DIR: tempDir },
+      env: { ...process.env, TODO_DIR: tempDir }
     })
     expect(stdout).toContain('一個包含中文的任務')
   })
