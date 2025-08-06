@@ -20,7 +20,7 @@ const App: React.FC<AppProps> = ({ command, args, flags, todoDir }) => {
   const [Ink, setInk] = useState<any>(null)
   const [parser] = useState(() => new TodoParser())
 
-  const isConxtOrProject = (command: string) =>
+  const isContextOrProject = (command: string) =>
     command === ValidCommands.ListCon ||
     command === ValidCommands.ListConAlias ||
     command === ValidCommands.ListProj ||
@@ -69,7 +69,7 @@ const App: React.FC<AppProps> = ({ command, args, flags, todoDir }) => {
       output.startsWith('No projects found')
     ) {
       color = 'magenta'
-    } else if (isConxtOrProject(command)) {
+    } else if (isContextOrProject(command)) {
       color = 'white'
     }
     return <Text color={color}>{output}</Text>
@@ -176,11 +176,6 @@ const App: React.FC<AppProps> = ({ command, args, flags, todoDir }) => {
             color = '#90EE90'
           } else if (task.priority === 'C') {
             color = '#ADD8E6'
-          }
-
-          // For listcon and listproj, we want to keep the default color
-          if (isConxtOrProject(command)) {
-            color = 'white'
           }
 
           return (
