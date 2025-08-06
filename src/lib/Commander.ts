@@ -101,14 +101,14 @@ export class Commander {
         const task = tasks[id - 1]
         await todoManager.updateTask(id - 1, { status: Status.Done })
 
-        const doneCommand = process.env.TODO_CMD_WHEN_DONE
+        const doneCommand = process.env.TODOMD_WHEN_DONE
         if (doneCommand) {
           try {
             const env = { ...process.env, TASK_DESCRIPTION: task.description }
             await execAsync(doneCommand, { env })
           } catch (error: any) {
             // Return the error from the script to the user
-            return `Error executing TODO_CMD_WHEN_DONE: ${
+            return `Error executing TODOMD_WHEN_DONE: ${
               error.stderr || error.message
             }`
           }

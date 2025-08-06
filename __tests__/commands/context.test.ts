@@ -23,7 +23,7 @@ describe('context command', () => {
     await addTask(tempDir, 'A task with a context')
 
     const { stdout } = await execPromise(`node ${cliPath} context 1 office`, {
-      env: { ...process.env, TODO_DIR: tempDir }
+      env: { ...process.env, TODOMD_DIR: tempDir }
     })
     expect(stdout).toContain('Context @office added to task 1')
 
@@ -36,7 +36,7 @@ describe('context command', () => {
     await addTask(tempDir, '一個帶有中文情境的任務')
 
     const { stdout } = await execPromise(`node ${cliPath} context 1 家`, {
-      env: { ...process.env, TODO_DIR: tempDir }
+      env: { ...process.env, TODOMD_DIR: tempDir }
     })
     expect(stdout).toContain('Context @家 added to task 1')
 

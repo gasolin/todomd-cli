@@ -76,7 +76,7 @@ const App: React.FC<AppProps> = ({ command, args, flags, todoDir }) => {
   }
 
   const isNearDay = (dueDate: string): boolean => {
-    const nearDays = parseInt(process.env.TODO_NEAR_DAYS || '2', 10)
+    const nearDays = parseInt(process.env.TODOMD_NEAR_DAYS || '2', 10)
     const date = parseISO(dueDate)
     return differenceInDays(date, new Date()) <= nearDays
   }

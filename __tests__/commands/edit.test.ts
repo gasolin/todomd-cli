@@ -25,7 +25,7 @@ describe('edit command', () => {
     const { stdout } = await execPromise(
       `node ${cliPath} edit 1 "${newDescription}"`,
       {
-        env: { ...process.env, TODO_DIR: tempDir }
+        env: { ...process.env, TODOMD_DIR: tempDir }
       }
     )
     expect(stdout).toContain('Task updated successfully')
@@ -40,7 +40,7 @@ describe('edit command', () => {
     const { stdout } = await execPromise(
       `node ${cliPath} edit 99 "new description"`,
       {
-        env: { ...process.env, TODO_DIR: tempDir }
+        env: { ...process.env, TODOMD_DIR: tempDir }
       }
     )
     expect(stdout).toContain('Error: Invalid task ID')
@@ -48,7 +48,7 @@ describe('edit command', () => {
 
   test('should show an error if no new description is provided', async () => {
     const { stdout } = await execPromise(`node ${cliPath} edit 1`, {
-      env: { ...process.env, TODO_DIR: tempDir }
+      env: { ...process.env, TODOMD_DIR: tempDir }
     })
     expect(stdout).toContain(
       'Error: Please provide a new description for the task'

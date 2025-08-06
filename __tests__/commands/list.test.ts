@@ -28,7 +28,7 @@ describe('list command', () => {
     await fs.writeFile(todoFilePath, fileContent)
 
     const { stdout } = await execPromise(`node ${cliPath} list`, {
-      env: { ...process.env, TODO_DIR: tempDir }
+      env: { ...process.env, TODOMD_DIR: tempDir }
     })
 
     expect(stdout).toContain('A task to do')
@@ -50,7 +50,7 @@ describe('list command', () => {
 
     // 2. Mark one as done and one as cancelled
     await execPromise(`node ${cliPath} done 2`, {
-      env: { ...process.env, TODO_DIR: tempDir }
+      env: { ...process.env, TODOMD_DIR: tempDir }
     })
     const todoFilePath = path.join(tempDir, 'todo.md')
     let fileContent = await fs.readFile(todoFilePath, 'utf8')
@@ -62,7 +62,7 @@ describe('list command', () => {
 
     // 3. Run listall command
     const { stdout } = await execPromise(`node ${cliPath} list`, {
-      env: { ...process.env, TODO_DIR: tempDir }
+      env: { ...process.env, TODOMD_DIR: tempDir }
     })
 
     // 4. Verify the output contains all tasks and their metadata
@@ -80,7 +80,7 @@ describe('list command', () => {
     await fs.writeFile(todoFilePath, fileContent)
 
     const { stdout } = await execPromise(`node ${cliPath} list`, {
-      env: { ...process.env, TODO_DIR: tempDir }
+      env: { ...process.env, TODOMD_DIR: tempDir }
     })
 
     // Parent task should have no prefix
@@ -112,7 +112,7 @@ describe('list command with search term', () => {
     await addTask(tempDir, 'Another task')
 
     const { stdout } = await execPromise(`node ${cliPath} list "special"`, {
-      env: { ...process.env, TODO_DIR: tempDir }
+      env: { ...process.env, TODOMD_DIR: tempDir }
     })
 
     expect(stdout).toContain('A special task to find')
@@ -123,7 +123,7 @@ describe('list command with search term', () => {
     await addTask(tempDir, 'A task')
 
     const { stdout } = await execPromise(`node ${cliPath} list "nonexistent"`, {
-      env: { ...process.env, TODO_DIR: tempDir }
+      env: { ...process.env, TODOMD_DIR: tempDir }
     })
 
     expect(stdout).toContain('No tasks found matching "nonexistent"')
@@ -132,7 +132,7 @@ describe('list command with search term', () => {
   test('should find tasks with Chinese characters', async () => {
     await addTask(tempDir, '一個包含中文的任務')
     const { stdout } = await execPromise(`node ${cliPath} list "中文"`, {
-      env: { ...process.env, TODO_DIR: tempDir }
+      env: { ...process.env, TODOMD_DIR: tempDir }
     })
     expect(stdout).toContain('一個包含中文的任務')
   })

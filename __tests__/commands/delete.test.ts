@@ -26,7 +26,7 @@ describe('delete command', () => {
     await addTask(tempDir, 'Second task to delete')
 
     const { stdout } = await execPromise(`node ${cliPath} delete 2`, {
-      env: { ...process.env, TODO_DIR: tempDir }
+      env: { ...process.env, TODOMD_DIR: tempDir }
     })
     expect(stdout).toContain('Task deleted')
 

@@ -26,7 +26,7 @@ describe('project command', () => {
 
       const { stdout } = await execPromise(
         `node ${cliPath} project 1 ${projectName}`,
-        { env: { ...process.env, TODO_DIR: tempDir } }
+        { env: { ...process.env, TODOMD_DIR: tempDir } }
       )
       expect(stdout).toContain(`Project +${projectName} added to task 1`)
 
@@ -40,7 +40,7 @@ describe('project command', () => {
     await addTask(tempDir, '一個帶有中文專案的任務')
 
     const { stdout } = await execPromise(`node ${cliPath} project 1 工作`, {
-      env: { ...process.env, TODO_DIR: tempDir }
+      env: { ...process.env, TODOMD_DIR: tempDir }
     })
     expect(stdout).toContain('Project +工作 added to task 1')
 

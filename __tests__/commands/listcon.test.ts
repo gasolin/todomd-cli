@@ -25,7 +25,7 @@ describe('listcon command', () => {
 
     // 2. Run listcon command
     const { stdout } = await execPromise(`node ${cliPath} listcon work`, {
-      env: { ...process.env, TODO_DIR: tempDir }
+      env: { ...process.env, TODOMD_DIR: tempDir }
     })
 
     // 3. Verify the output
@@ -39,7 +39,7 @@ describe('listcon command', () => {
 
     const { stdout } = await execPromise(
       `node ${cliPath} listcon nonexistent`,
-      { env: { ...process.env, TODO_DIR: tempDir } }
+      { env: { ...process.env, TODOMD_DIR: tempDir } }
     )
     expect(stdout).toContain('No tasks found for context "@nonexistent"')
   })
@@ -50,7 +50,7 @@ describe('listcon command', () => {
     await addTask(tempDir, 'A third task @work')
 
     const { stdout } = await execPromise(`node ${cliPath} listcon`, {
-      env: { ...process.env, TODO_DIR: tempDir }
+      env: { ...process.env, TODOMD_DIR: tempDir }
     })
 
     expect(stdout).toContain('@work')

@@ -25,7 +25,7 @@ describe('listproj command', () => {
 
     // 2. Run listproj command
     const { stdout } = await execPromise(`node ${cliPath} listproj work`, {
-      env: { ...process.env, TODO_DIR: tempDir }
+      env: { ...process.env, TODOMD_DIR: tempDir }
     })
 
     // 3. Verify the output
@@ -39,7 +39,7 @@ describe('listproj command', () => {
 
     const { stdout } = await execPromise(
       `node ${cliPath} listproj nonexistent`,
-      { env: { ...process.env, TODO_DIR: tempDir } }
+      { env: { ...process.env, TODOMD_DIR: tempDir } }
     )
     expect(stdout).toContain('No tasks found for project "+nonexistent"')
   })
@@ -50,7 +50,7 @@ describe('listproj command', () => {
     await addTask(tempDir, 'A third task +work')
 
     const { stdout } = await execPromise(`node ${cliPath} listproj`, {
-      env: { ...process.env, TODO_DIR: tempDir }
+      env: { ...process.env, TODOMD_DIR: tempDir }
     })
 
     expect(stdout).toContain('+work')

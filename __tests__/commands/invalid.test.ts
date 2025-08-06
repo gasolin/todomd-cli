@@ -20,7 +20,7 @@ describe('Invalid Command', () => {
 
   test('should show an error for an unknown command', async () => {
     const { stdout } = await execPromise(`node ${cliPath} foobar`, {
-      env: { ...process.env, TODO_DIR: tempDir }
+      env: { ...process.env, TODOMD_DIR: tempDir }
     })
     expect(stdout).toContain('Error: Unknown command "foobar"')
     expect(stdout).toContain(

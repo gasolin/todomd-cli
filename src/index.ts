@@ -58,7 +58,7 @@ const cli = meow(
   } as any
 )
 
-const todoDir = process.env.TODO_DIR || path.join(os.homedir(), '.todomd')
+const todoDir = process.env.TODOMD_DIR || path.join(os.homedir(), '.todomd')
 
 async function run() {
   const { render } = await import('ink')

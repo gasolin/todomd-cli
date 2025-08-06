@@ -56,16 +56,16 @@ Set your todo directory and other options using environment variables:
 
 ```bash
 # In your shell profile (~/.bashrc, ~/.zshrc, etc.)
-export TODO_DIR="$HOME/Documents/todos"
-export TODO_NEAR_DAYS=3 # Highlight tasks due in the next 3 days (default is 2)
+export TODOMD_DIR="$HOME/Documents/todos"
+export TODOMD_NEAR_DAYS=3 # Highlight tasks due in the next 3 days (default is 2)
 
 # Or create a .env file in your project directory
-echo "TODO_DIR=/path/to/your/todos" > .env
-echo "TODO_NEAR_DAYS=3" >> .env
-echo "TODO_CMD_WHEN_DONE=~/bin/task_done_notify" >> .env
+echo "TODOMD_DIR=/path/to/your/todos" > .env
+echo "TODOMD_NEAR_DAYS=3" >> .env
+echo "TODOMD_WHEN_DONE=~/bin/task_done_notify" >> .env
 ```
 
-### `TODO_CMD_WHEN_DONE`
+### `TODOMD_WHEN_DONE`
 
 You can specify a command to be executed whenever a task is marked as done. The description of the completed task will be passed to the command via the `TASK_DESCRIPTION` environment variable.
 
@@ -88,8 +88,8 @@ JOURNAL_FILE="$LOGSEQ_DIR/journals/$(date +'%Y_%m_%d').md"
 echo "- DONE $TASK_DESCRIPTION" >> "$JOURNAL_FILE"
 ```
 
-You would then set `TODO_CMD_WHEN_DONE` in your `.env` file:
-`TODO_CMD_WHEN_DONE=~/tools/append_journal.sh`
+You would then set `TODOMD_WHEN_DONE` in your `.env` file:
+`TODOMD_WHEN_DONE=~/tools/append_journal.sh`
 
 ## Quick Start
 
@@ -215,7 +215,7 @@ todomd context 2 home
 When you run `todomd init`, it creates:
 
 ```
-~/.todomd/          # Default directory (or your TODO_DIR)
+~/.todomd/          # Default directory (or your TODOMD_DIR)
 ├── todo.md         # Main task file
 ├── done.md         # Completed tasks archive
 └── .env.example    # Configuration example

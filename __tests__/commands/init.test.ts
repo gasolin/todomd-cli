@@ -19,7 +19,7 @@ describe('init command', () => {
 
   test('should initialize the todomd directory and files', async () => {
     const { stdout } = await execPromise(`node ${cliPath} init`, {
-      env: { ...process.env, TODO_DIR: tempDir }
+      env: { ...process.env, TODOMD_DIR: tempDir }
     })
 
     expect(stdout).toContain('TodoMD directory initialized')

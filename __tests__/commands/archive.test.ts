@@ -29,12 +29,12 @@ describe('archive command', () => {
 
     // 2. Mark one as done
     await execPromise(`node ${cliPath} done 2`, {
-      env: { ...process.env, TODO_DIR: tempDir }
+      env: { ...process.env, TODOMD_DIR: tempDir }
     })
 
     // 3. Run archive command
     const { stdout } = await execPromise(`node ${cliPath} archive`, {
-      env: { ...process.env, TODO_DIR: tempDir }
+      env: { ...process.env, TODOMD_DIR: tempDir }
     })
     expect(stdout).toContain('Completed tasks archived')
 

@@ -7,7 +7,7 @@
 # It supports custom journal paths through environment variables.
 #
 # Usage:
-#   set TODO_CMD_WHEN_DONE environment variable to this script path
+#   set TODOMD_WHEN_DONE environment variable to this script path
 #   when run command `todomd done [num]` the script will be executed.
 #   Or manually set TASK_DESCRIPTION environment variable, then run the script
 #
@@ -15,21 +15,21 @@
 #   TASK_DESCRIPTION="Complete project documentation" ./append_task.sh
 #
 # Environment Variables:
-#   TODO_CMD_WHEN_DONE   - Where this script locate (optional)
-#   TODO_JOURNAL_PATH    - Base path to Logseq journals directory (optional)
+#   TODOMD_WHEN_DONE   - Where this script locate (optional)
+#   TODOMD_JOURNAL_PATH    - Base path to Logseq journals directory (optional)
 #   TASK_DESCRIPTION     - The task description to append (required)
 #
 # For Logseq users:
 #   By default, this script looks for journals in current folder
 #
-#   To use a custom Logseq location, set TODO_JOURNAL_PATH:
-#   export TODO_JOURNAL_PATH="/path/to/your/logseq/journals"
+#   To use a custom Logseq location, set TODOMD_JOURNAL_PATH:
+#   export TODOMD_JOURNAL_PATH="/path/to/your/logseq/journals"
 #
 #   Example for Dropbox-synced Logseq:
-#   export TODO_JOURNAL_PATH="/Users/username/Library/CloudStorage/Dropbox/Logseq/journals"
+#   export TODOMD_JOURNAL_PATH="/Users/username/Library/CloudStorage/Dropbox/Logseq/journals"
 #
 #   If using Logseq Desktop with default settings, you might use:
-#   export TODO_JOURNAL_PATH="$HOME/.logseq/journals"
+#   export TODOMD_JOURNAL_PATH="$HOME/.logseq/journals"
 #
 # Requirements:
 #   - Bash shell
@@ -42,7 +42,7 @@
 TODAY=$(date +%Y_%m_%d)
 
 # Set the journal path (adjust the path as needed)
-JOURNAL_PATH="${TODO_JOURNAL_PATH:.}/${TODAY}.md"
+JOURNAL_PATH="${TODOMD_JOURNAL_PATH:.}/${TODAY}.md"
 
 # Check if TASK_DESCRIPTION is set
 if [ -z "$TASK_DESCRIPTION" ]; then

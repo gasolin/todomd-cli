@@ -29,12 +29,12 @@ describe('undone command', () => {
 
     // 2. Mark the task as done
     await execPromise(`node ${cliPath} done 1`, {
-      env: { ...process.env, TODO_DIR: tempDir }
+      env: { ...process.env, TODOMD_DIR: tempDir }
     })
 
     // 3. Mark the task as undone
     const { stdout } = await execPromise(`node ${cliPath} undone 1`, {
-      env: { ...process.env, TODO_DIR: tempDir }
+      env: { ...process.env, TODOMD_DIR: tempDir }
     })
     expect(stdout).toContain('Task marked as incomplete')
 

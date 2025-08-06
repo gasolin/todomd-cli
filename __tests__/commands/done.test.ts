@@ -23,7 +23,7 @@ describe('done command', () => {
     await addTask(tempDir, 'A task to be completed')
 
     const { stdout } = await execPromise(`node ${cliPath} done 1`, {
-      env: { ...process.env, TODO_DIR: tempDir }
+      env: { ...process.env, TODOMD_DIR: tempDir }
     })
     expect(stdout).toContain('Task completed')
 
@@ -32,7 +32,7 @@ describe('done command', () => {
     expect(fileContent).toContain('- [x] A task to be completed')
   })
 
-  test('should execute TODO_CMD_WHEN_DONE and pass task description', async () => {
+  test('should execute TODOMD_WHEN_DONE and pass task description', async () => {
     const taskDescription = 'A task to trigger the command'
     await addTask(tempDir, taskDescription)
 
@@ -42,8 +42,8 @@ describe('done command', () => {
     await execPromise(`node ${cliPath} done 1`, {
       env: {
         ...process.env,
-        TODO_DIR: tempDir,
-        TODO_CMD_WHEN_DONE: command
+        TODOMD_DIR: tempDir,
+        TODOMD_WHEN_DONE: command
       }
     })
 
