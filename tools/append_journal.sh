@@ -42,7 +42,7 @@
 TODAY=$(date +%Y_%m_%d)
 
 # Set the journal path (adjust the path as needed)
-JOURNAL_PATH="${TODOMD_JOURNAL_PATH:.}/${TODAY}.md"
+JOURNAL_PATH="${TODOMD_JOURNAL_PATH:-"."}/${TODAY}.md"
 
 # Check if TASK_DESCRIPTION is set
 if [ -z "$TASK_DESCRIPTION" ]; then
@@ -54,6 +54,7 @@ fi
 mkdir -p "$(dirname "$JOURNAL_PATH")"
 
 # Append the task description to the journal file
+# echo 'appended "- ' $TASK_DESCRIPTION '" to ' $JOURNAL_PATH
 echo "- $TASK_DESCRIPTION" >> "$JOURNAL_PATH"
 
 echo "Task description appended to $JOURNAL_PATH"

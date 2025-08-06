@@ -4,8 +4,7 @@ import { ValidCommands } from '../types/Commands'
 import { getListTasks } from './TaskLister'
 import fs from 'fs/promises'
 import path from 'path'
-import { spawn, exec } from 'child_process'
-import os from 'os'
+import { spawn } from 'child_process'
 import {
   format,
   addDays,
@@ -27,9 +26,6 @@ const dayMap: Record<string, Day> = {
   friday: 5,
   saturday: 6
 }
-
-import { promisify } from 'util'
-const execAsync = promisify(exec)
 
 export class Commander {
   private todoDir: string
@@ -104,11 +100,73 @@ export class Commander {
         const doneCommand = process.env.TODOMD_WHEN_DONE
         if (doneCommand) {
           try {
-            const env = { ...process.env, TASK_DESCRIPTION: task.description }
-            await execAsync(doneCommand, { env })
+            // Check if the file exists
+            await fs.access(doneCommand)
+            // Get file stats to check if it's executable (on Unix systems)
+            const stats = await fs.stat(doneCommand)
+            if (process.platform !== 'win32') {
+              // Check if file has execute permissions (user execute bit)
+              if (!(stats.mode & parseInt('100', 8))) {
+                console.warn(
+                  `Warning: File may not be executable: ${doneCommand}`
+                )
+              }
+            }
+
+            const taskDesc = task.projects
+              ? `${task.projects.map((item) => '#' + item).join(' ')} ${task.description}`
+              : task.description
+            console.log('Executing script:', doneCommand, taskDesc)
+
+            // Determine how to execute the script based on file extension
+            let command, args: string[]
+            const ext = path.extname(doneCommand).toLowerCase()
+
+            switch (ext) {
+              case '.js':
+                command = 'node'
+                args = [doneCommand]
+                break
+              case '.sh':
+                command = 'bash'
+                args = [doneCommand]
+                break
+              case '.py':
+                command = 'python'
+                args = [doneCommand]
+                break
+              case '.ps1':
+                command = 'powershell'
+                args = ['-File', doneCommand]
+                break
+              default:
+                // Try to execute directly (for executable files or shebang scripts)
+                command = doneCommand
+                args = []
+            }
+
+            // Execute the script
+            const child = spawn(command, args, {
+              stdio: ['inherit', 'inherit', 'inherit'], // Pass through stdin, stdout, stderr
+              shell: process.platform === 'win32', // Use shell on Windows
+              env: { ...process.env, TASK_DESCRIPTION: taskDesc }
+            })
+
+            // Wait for the process to complete
+            const exitCode = await new Promise((resolve, reject) => {
+              child.on('close', (code) => {
+                resolve(code)
+              })
+
+              child.on('error', (error) => {
+                reject(error)
+              })
+            })
+
+            console.log(`Script execution completed, exit code: ${exitCode}`)
           } catch (error: any) {
             // Return the error from the script to the user
-            return `Error executing TODOMD_WHEN_DONE: ${
+            return `Error executing TODOMD_WHEN_DONE with ${doneCommand}: ${
               error.stderr || error.message
             }`
           }
