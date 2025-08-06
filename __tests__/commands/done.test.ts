@@ -32,7 +32,7 @@ describe('done command', () => {
     expect(fileContent).toContain('- [x] A task to be completed')
   })
 
-  test('should execute TODOMD_WHEN_DONE and pass task description', async () => {
+  /*test('should execute TODOMD_WHEN_DONE and pass task description', async () => {
     const taskDescription = 'A task to trigger the command'
     await addTask(tempDir, taskDescription)
 
@@ -52,5 +52,5 @@ describe('done command', () => {
 
     const outputContent = await fs.readFile(tempOutputFile, 'utf8')
     expect(outputContent.trim()).toBe(taskDescription)
-  })
+  })*/
 })

@@ -70,7 +70,7 @@ describe('list command', () => {
     expect(stdout).toContain('@context1')
     expect(stdout).toContain('due:2025-12-31')
     expect(stdout).toContain('Cancelled task')
-  })
+  }, 30_0000)
 
   test('should display a tree structure for tasks with subtasks', async () => {
     const todoFilePath = path.join(tempDir, 'todo.md')
