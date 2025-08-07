@@ -86,7 +86,10 @@ export class Commander {
           const taskDesc = task.projects
             ? `${task.projects?.map((item) => '#' + item).join(' ')} ${task.description} ${task.contexts?.map((item) => '@' + item).join(' ')}`
             : task.description
-          console.log('Executing script:', doneCommand.replace(/TASK_DESCRIPTION/g, taskDesc))
+          console.log(
+            'Executing script:',
+            doneCommand.replace(/TASK_DESCRIPTION/g, taskDesc)
+          )
 
           const error = await runScript(doneCommand, taskDesc)
           if (error) {

@@ -147,7 +147,10 @@ export async function runScript(
       }
     } else {
       // Handle shell command - replace TASK_DESCRIPTION with actual value
-      const expandedCommand = command.replace(/TASK_DESCRIPTION/g, `"${taskDescription.replace(/"/g, '\\"')}"`)
+      const expandedCommand = command.replace(
+        /TASK_DESCRIPTION/g,
+        `"${taskDescription.replace(/"/g, '\\"')}"`
+      )
       useShell = true
       if (process.platform === 'win32') {
         execCommand = 'cmd'
