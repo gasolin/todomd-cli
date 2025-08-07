@@ -96,7 +96,7 @@ export class Commander {
             }
 
             const taskDesc = task.projects
-              ? `${task.projects.map((item) => '#' + item).join(' ')} ${task.description}`
+              ? `${task.projects?.map((item) => '#' + item).join(' ')} ${task.description} ${task.contexts?.map((item) => '@' + item).join(' ')}`
               : task.description
             console.log('Executing script:', doneCommand, taskDesc)
 

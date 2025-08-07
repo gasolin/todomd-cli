@@ -44,6 +44,10 @@ TODAY=$(date +%Y_%m_%d)
 # Set the journal path (adjust the path as needed)
 JOURNAL_PATH="${TODOMD_JOURNAL_PATH:-"."}/${TODAY}.md"
 
+if [ -z "$TODOMD_JOURNAL_PATH" ]; then
+    echo "TODOMD_JOURNAL_PATH not found, write to default ./"${TODAY}.md
+fi
+
 # Check if TASK_DESCRIPTION is set
 if [ -z "$TASK_DESCRIPTION" ]; then
     echo "Error: TASK_DESCRIPTION environment variable is not set"
@@ -55,6 +59,6 @@ mkdir -p "$(dirname "$JOURNAL_PATH")"
 
 # Append the task description to the journal file
 # echo 'appended "- ' $TASK_DESCRIPTION '" to ' $JOURNAL_PATH
-echo "- $TASK_DESCRIPTION" >> "$JOURNAL_PATH"
+echo -e "\n$TASK_DESCRIPTION" >> "$JOURNAL_PATH"
 
 echo "Task description appended to $JOURNAL_PATH"
