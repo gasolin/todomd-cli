@@ -31,7 +31,6 @@ A command-line tool for managing todomd format files, inspired by todo.txt-cli b
 - [x] `project, proj <id> <project>` - Add a project to a task
 - [x] `context, ctx <id> <context>` - Add a context to a task
 - [x] `due <id> <date>` - Set a due date for a task
-- [x] `search <term>` - Search for tasks
 - [x] `archive` - Move completed tasks to done.md
 
 ## Installation
