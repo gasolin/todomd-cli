@@ -98,7 +98,7 @@ export class TodoParser {
     }
 
     // Parse key:value attributes
-    const kvMatches = remainingContent.match(/(\w+):([^\s]+)/g)
+    const kvMatches = remainingContent.match(/([A-Za-z][\w]*):([^\s]+)/g)
     if (kvMatches) {
       kvMatches.forEach((match) => {
         const [key, value] = match.split(':')
@@ -136,7 +136,7 @@ export class TodoParser {
     description = description.replace(/\+[^\s]+/g, '').trim() // Remove projects
     description = description.replace(/@[^\s]+/g, '').trim() // Remove contexts
     description = description.replace(/#[^\s]+/g, '').trim() // Remove tags
-    description = description.replace(/\w+:[^\s]+/g, '').trim() // Remove key:value pairs
+    description = description.replace(/[A-Za-z][\w]*:[^\s]+/g, '').trim() // Remove key:value pairs
     description = description.replace(/\s+/g, ' ').trim() // Normalize whitespace
 
     task.description = description
