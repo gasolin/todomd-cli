@@ -58,7 +58,19 @@ fi
 mkdir -p "$(dirname "$JOURNAL_PATH")"
 
 # Append the task description to the journal file
-# echo 'appended "- ' $TASK_DESCRIPTION '" to ' $JOURNAL_PATH
-echo -e "\n$TASK_DESCRIPTION" >> "$JOURNAL_PATH"
+# Check if file exists and ends with a newline
+if [ -f "$JOURNAL_PATH" ]; then
+    # File exists, check if it ends with a newline
+    if tail -c 1 "$JOURNAL_PATH" | read -r _; then
+        # File ends with a newline, append without leading newline
+        echo "- $TASK_DESCRIPTION" >> "$JOURNAL_PATH"
+    else
+        # File doesn't end with a newline, append with leading newline
+        echo -e "\n- $TASK_DESCRIPTION" >> "$JOURNAL_PATH"
+    fi
+else
+    # File doesn't exist, create it with leading newline
+    echo -e "\n- $TASK_DESCRIPTION" >> "$JOURNAL_PATH"
+fi
 
 echo "Task description appended to $JOURNAL_PATH"
