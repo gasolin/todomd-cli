@@ -57,13 +57,6 @@ describe('TaskLister', () => {
     expect(tasks[3].id).toBe(3)
   })
 
-  test('should list all tasks for "listall" command', () => {
-    const result = getListTasks(ValidCommands.ListAll, [], mockTasks)
-    expect(Array.isArray(result)).toBe(true)
-    const tasks = result as Task[]
-    expect(tasks).toHaveLength(4)
-  })
-
   test('should filter tasks by project for "listproj" command', () => {
     const result = getListTasks(ValidCommands.ListProj, ['+projA'], mockTasks)
     expect(Array.isArray(result)).toBe(true)

@@ -1,9 +1,10 @@
 {
   "compilerOptions": {
+    "types": ["node", "jest"],
     "target": "ESNext",
     "module": "NodeNext",
     "outDir": "./dist",
-    "rootDir": "./src",
+    "rootDir": ".",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -16,6 +17,6 @@
     "noEmit": false,
     "isolatedModules": true
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "__tests__/**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }

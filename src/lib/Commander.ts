@@ -4,7 +4,6 @@ import { ValidCommands } from '../types/Commands'
 import { getListTasks } from './TaskLister'
 import fs from 'fs/promises'
 import path from 'path'
-import { spawn } from 'child_process'
 import { format } from 'date-fns'
 
 import { getDueDate } from './DueDate'
@@ -14,11 +13,25 @@ export class Commander {
   private todoDir: string
   private todoFile: string | undefined
   private doneFile: string | undefined
+  // In‑memory command context to map user‑visible indices to actual task indices
+  private commandCxt: { command: string; args: string[] } | null = null
 
   constructor(todoDir: string, todoFile?: string, doneFile?: string) {
     this.todoDir = todoDir
     this.todoFile = todoFile
     this.doneFile = doneFile
+  }
+  // Resolve the actual task index based on the current command context (e.g., after a filtered list)
+  private resolveIdx(id: number, tasks: Task[]): number {
+    if (!this.commandCxt) return id - 1
+    const filtered = getListTasks(
+      this.commandCxt.command,
+      this.commandCxt.args,
+      tasks
+    ) as Task[]
+    if (!Array.isArray(filtered) || !filtered[id - 1]) return -1
+    const taskObj = filtered[id - 1]
+    return tasks.findIndex((t) => t === taskObj)
   }
 
   async run(command: string, args: string[]): Promise<string | Task[]> {
@@ -75,10 +88,11 @@ export class Commander {
       case ValidCommands.Done:
       case ValidCommands.DoneAlias: {
         const id = parseInt(effectiveArgs[0])
-        if (isNaN(id) || !tasks[id - 1]) return 'Error: Invalid task ID'
+        const resolvedIdx = this.resolveIdx(id, tasks)
+        if (isNaN(id) || resolvedIdx === -1) return 'Error: Invalid task ID'
 
-        const task = tasks[id - 1]
-        await todoManager.updateTask(id - 1, { status: Status.Done })
+        const task = tasks[resolvedIdx]
+        await todoManager.updateTask(resolvedIdx, { status: Status.Done })
 
         const doneCommand = process.env.TODOMD_WHEN_DONE
         // runScript
@@ -103,24 +117,27 @@ export class Commander {
       case ValidCommands.Undone:
       case ValidCommands.UndoneAlias: {
         const id = parseInt(effectiveArgs[0])
-        if (isNaN(id) || !tasks[id - 1]) return 'Error: Invalid task ID'
-        await todoManager.updateTask(id - 1, { status: Status.Todo })
+        const resolvedIdx = this.resolveIdx(id, tasks)
+        if (isNaN(id) || resolvedIdx === -1) return 'Error: Invalid task ID'
+        await todoManager.updateTask(resolvedIdx, { status: Status.Todo })
         return 'Task marked as incomplete'
       }
 
       case ValidCommands.InProgress:
       case ValidCommands.InProgressAlias: {
         const id = parseInt(effectiveArgs[0])
-        if (isNaN(id) || !tasks[id - 1]) return 'Error: Invalid task ID'
-        await todoManager.updateTask(id - 1, { status: Status.InProgress })
+        const resolvedIdx = this.resolveIdx(id, tasks)
+        if (isNaN(id) || resolvedIdx === -1) return 'Error: Invalid task ID'
+        await todoManager.updateTask(resolvedIdx, { status: Status.InProgress })
         return 'Task marked as in-progress'
       }
 
       case ValidCommands.Cancel:
       case ValidCommands.CancelAlias: {
         const id = parseInt(effectiveArgs[0])
-        if (isNaN(id) || !tasks[id - 1]) return 'Error: Invalid task ID'
-        await todoManager.updateTask(id - 1, { status: Status.Cancelled })
+        const resolvedIdx = this.resolveIdx(id, tasks)
+        if (isNaN(id) || resolvedIdx === -1) return 'Error: Invalid task ID'
+        await todoManager.updateTask(resolvedIdx, { status: Status.Cancelled })
         return 'Task cancelled'
       }
 
@@ -128,10 +145,11 @@ export class Commander {
       case ValidCommands.DeleteAliasRm:
       case ValidCommands.DeleteAliasDel:
         const idToDelete = parseInt(effectiveArgs[0])
-        if (isNaN(idToDelete) || !tasks[idToDelete - 1]) {
+        const resolvedIdx = this.resolveIdx(idToDelete, tasks)
+        if (isNaN(idToDelete) || resolvedIdx === -1) {
           return 'Error: Invalid task ID'
         }
-        await todoManager.deleteTask(idToDelete - 1)
+        await todoManager.deleteTask(resolvedIdx)
         return 'Task deleted'
 
       case ValidCommands.Archive:
@@ -142,10 +160,11 @@ export class Commander {
       case ValidCommands.PriorityAlias: {
         const id = parseInt(effectiveArgs[0])
         const priority = effectiveArgs[1]
-        if (isNaN(id) || !tasks[id - 1]) return 'Error: Invalid task ID'
+        const resolvedIdx = this.resolveIdx(id, tasks)
+        if (isNaN(id) || resolvedIdx === -1) return 'Error: Invalid task ID'
         if (!priority || !/^[A-Z]$/.test(priority))
           return 'Error: Priority must be a single uppercase letter'
-        await todoManager.updateTask(id - 1, { priority })
+        await todoManager.updateTask(resolvedIdx, { priority })
         return `Priority for task ${id} set to (${priority})`
       }
 
@@ -153,10 +172,11 @@ export class Commander {
       case ValidCommands.ProjectAlias: {
         const id = parseInt(effectiveArgs[0])
         const project = effectiveArgs[1]
-        if (isNaN(id) || !tasks[id - 1]) return 'Error: Invalid task ID'
+        const resolvedIdx = this.resolveIdx(id, tasks)
+        if (isNaN(id) || resolvedIdx === -1) return 'Error: Invalid task ID'
         if (!project) return 'Error: Please provide a project name'
-        const newProjects = [...(tasks[id - 1].projects || []), project]
-        await todoManager.updateTask(id - 1, { projects: newProjects })
+        const newProjects = [...(tasks[resolvedIdx].projects || []), project]
+        await todoManager.updateTask(resolvedIdx, { projects: newProjects })
         return `Project +${project} added to task ${id}`
       }
 
@@ -164,10 +184,11 @@ export class Commander {
       case ValidCommands.ContextAlias: {
         const id = parseInt(effectiveArgs[0])
         const context = effectiveArgs[1]
-        if (isNaN(id) || !tasks[id - 1]) return 'Error: Invalid task ID'
+        const resolvedIdx = this.resolveIdx(id, tasks)
+        if (isNaN(id) || resolvedIdx === -1) return 'Error: Invalid task ID'
         if (!context) return 'Error: Please provide a context name'
-        const newContexts = [...(tasks[id - 1].contexts || []), context]
-        await todoManager.updateTask(id - 1, { contexts: newContexts })
+        const newContexts = [...(tasks[resolvedIdx].contexts || []), context]
+        await todoManager.updateTask(resolvedIdx, { contexts: newContexts })
         return `Context @${context} added to task ${id}`
       }
 
@@ -192,15 +213,25 @@ export class Commander {
       case ValidCommands.List:
       case ValidCommands.ListAlias:
         if (effectiveArgs.length > 0) {
-          return getListTasks('search', effectiveArgs, tasks)
+          const result = getListTasks('search', effectiveArgs, tasks)
+          if (Array.isArray(result))
+            this.commandCxt = { command: 'search', args: effectiveArgs }
+          return result
         }
-        return getListTasks(effectiveCommand, effectiveArgs, tasks)
+        const listResult = getListTasks(effectiveCommand, effectiveArgs, tasks)
+        if (Array.isArray(listResult))
+          this.commandCxt = { command: effectiveCommand, args: effectiveArgs }
+        return listResult
 
       case ValidCommands.ListCon:
       case ValidCommands.ListConAlias:
       case ValidCommands.ListProj:
-      case ValidCommands.ListProjAlias:
-        return getListTasks(effectiveCommand, effectiveArgs, tasks)
+      case ValidCommands.ListProjAlias: {
+        const result = getListTasks(effectiveCommand, effectiveArgs, tasks)
+        if (Array.isArray(result))
+          this.commandCxt = { command: effectiveCommand, args: effectiveArgs }
+        return result
+      }
 
       case ValidCommands.Edit:
       case ValidCommands.EditAlias:
