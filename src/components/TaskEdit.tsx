@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Box, Text, useApp, useInput } from 'ink'
 import { TodoManager } from '../lib/TodoManager.js'
 import { Task } from '../types/Task.js'
