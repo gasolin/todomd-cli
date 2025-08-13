@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { Commander } from '../lib/Commander'
 import { Task, Status } from '../types/Task'
 import { ValidCommands } from '../types/Commands'
-import { TodoParser } from '../lib/TodoParser'
 import { parseISO, isPast, differenceInDays } from 'date-fns'
 
 interface AppProps {
@@ -18,7 +17,6 @@ const App: React.FC<AppProps> = ({ command, args, flags, todoDir }) => {
   const [appStatus, setAppStatus] = useState<AppStatus>('loading')
   const [output, setOutput] = useState<string | Task[] | null>(null)
   const [Ink, setInk] = useState<any>(null)
-  const [parser] = useState(() => new TodoParser())
 
   const isConxtOrProject = (command: string) =>
     command === ValidCommands.ListCon ||
@@ -83,6 +81,9 @@ const App: React.FC<AppProps> = ({ command, args, flags, todoDir }) => {
 
   const formatTaskLine = (task: Task): string => {
     let line = ''
+    if (task.recurrence) {
+      line += `(${task.recurrence}) `
+    }
     if (task.priority) {
       line += `(${task.priority}) `
     }
@@ -131,6 +132,7 @@ const App: React.FC<AppProps> = ({ command, args, flags, todoDir }) => {
       }
       return <Text color='magenta'>No tasks found.</Text>
     }
+
     const maxDigits = String(output.length).length
 
     return (

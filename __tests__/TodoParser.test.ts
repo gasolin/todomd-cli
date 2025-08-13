@@ -74,6 +74,18 @@ describe('TodoParser', () => {
     })
   })
 
+  test('should not parse a task with time HH:MM as key:value attributes', () => {
+    const line = '- [ ] Meeting at 7:30 #work owner:John'
+    const task = parser.parseTaskLine(line, 0, 6)
+    expect(task).toMatchObject({
+      description: 'Meeting at 7:30',
+      tags: ['work'],
+      customAttributes: {
+        owner: 'John'
+      }
+    })
+  })
+
   test('should parse a complex task with multiple metadata', () => {
     const line =
       '- [ ] (A) +project-x @office Review the proposal due:2025-08-15 #review'

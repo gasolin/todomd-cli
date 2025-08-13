@@ -69,7 +69,7 @@ async function run() {
       flags: cli.flags,
       todoDir: todoDir
     })
-  )
+  , { debug: false })
 }
 
 run()

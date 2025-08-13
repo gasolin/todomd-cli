@@ -132,14 +132,35 @@ export class TodoParser {
 
     // Extract the main description (remove metadata)
     let description = remainingContent
-    description = description.replace(/\([A-Z]\)/g, '').trim() // Remove priority
-    description = description.replace(/\+[^\s]+/g, '').trim() // Remove projects
-    description = description.replace(/@[^\s]+/g, '').trim() // Remove contexts
-    description = description.replace(/#[^\s]+/g, '').trim() // Remove tags
-    description = description.replace(/[A-Za-z][\w]*:[^\s]+/g, '').trim() // Remove key:value pairs
-    description = description.replace(/\s+/g, ' ').trim() // Normalize whitespace
 
-    task.description = description
+    // Create arrays to store all metadata patterns found
+    const allMetadataPatterns: string[] = []
+
+    // Collect project patterns
+    const projectPatterns = description.match(/\+[^\s]+/g) || []
+    allMetadataPatterns.push(...projectPatterns)
+
+    // Collect context patterns
+    const contextPatterns = description.match(/@[^\s]+/g) || []
+    allMetadataPatterns.push(...contextPatterns)
+
+    // Collect tag patterns
+    const tagPatterns = description.match(/#[^\s]+/g) || []
+    allMetadataPatterns.push(...tagPatterns)
+
+    // Collect key:value patterns
+    const kvPatterns = description.match(/[A-Za-z][\w]*:[^\s]+/g) || []
+    allMetadataPatterns.push(...kvPatterns)
+
+    // Remove all metadata patterns from description
+    for (const pattern of allMetadataPatterns) {
+      // Escape special regex characters in the pattern
+      const escapedPattern = pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      description = description.replace(new RegExp(escapedPattern, 'g'), '')
+    }
+
+    // Normalize whitespace
+    task.description = description.replace(/\s+/g, ' ').trim()
 
     return task
   }
