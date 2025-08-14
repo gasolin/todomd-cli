@@ -74,6 +74,18 @@ describe('TodoParser', () => {
     })
   })
 
+  test('should keep time in description for task with metadata', () => {
+    const line =
+      '- [ ] 太魯閣 +Tomica +預約 @外出 2:30pm due:2025-07-20 cr:2025-07-14'
+    const task = parser.parseTaskLine(line, 0, 7)
+    expect(task).toMatchObject({
+      description: '太魯閣 2:30pm',
+      projects: ['Tomica', '預約'],
+      contexts: ['外出'],
+      dueDate: '2025-07-20'
+    })
+  })
+
   test('should not parse a task with time HH:MM as key:value attributes', () => {
     const line = '- [ ] Meeting at 7:30 #work owner:John'
     const task = parser.parseTaskLine(line, 0, 6)

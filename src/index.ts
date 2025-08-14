@@ -68,8 +68,9 @@ async function run() {
       args: cli.input.slice(1),
       flags: cli.flags,
       todoDir: todoDir
-    })
-  , { debug: false })
+    }),
+    { debug: false }
+  )
 }
 
 run()
