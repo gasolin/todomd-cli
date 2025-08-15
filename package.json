@@ -1,6 +1,6 @@
 {
   "name": "@gasolin/todomd-cli",
-  "version": "0.10.1",
+  "version": "0.10.2",
   "description": "A command-line tool for managing todomd format files",
   "main": "dist/src/index.js",
   "bin": {
