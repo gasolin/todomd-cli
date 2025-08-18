@@ -165,6 +165,8 @@ const App: React.FC<AppProps> = ({ command, args, flags, todoDir }) => {
           let color
           if (task.status === Status.Done || task.status === Status.Cancelled) {
             color = 'gray'
+          } else if (task.status === Status.InProgress) {
+            color = '#FFD580'
           } else if (task.dueDate) {
             const dueDate = parseISO(task.dueDate)
             if (isPast(dueDate)) {
