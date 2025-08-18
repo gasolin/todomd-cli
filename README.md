@@ -26,6 +26,8 @@ A command-line tool for managing todomd format files, inspired by todo.txt-cli b
 - [x] `done, do <id>` - Mark a task as completed
 - [x] `undone, ud <id>` - Mark task as incomplete
 - [x] `delete, rm, del <id>` - Delete a task
+- [x] `cancel <id>` - Cancel a task
+- [x] `inprogress <id>` - Set a task as in progress
 - [x] `edit <id> <new description>` - Edit a task's description
 - [x] `priority, pri <id> <priority>` - Set task priority
 - [x] `project, proj <id> <project>` - Add a project to a task

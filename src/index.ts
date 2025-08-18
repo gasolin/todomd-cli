@@ -26,11 +26,13 @@ const cli = meow(
     add, a <task>                 Add a new task
     done, do <id>                 Mark task as completed
     undone, ud <id>               Mark task as incomplete
+    cancel <id>                   Cancel a task
+    inprogress <id>               Set a task as in progress
     delete, rm, del <id>          Delete a task
     edit <id>                     Edit a task
     priority, pri <id> <priority> Set task priority
     project, proj <task> <project> Add project to task
-    context, ctx <task> <context>   Add context to task
+    context, ctx <task> <context>  Add context to task
     due <id> <date>               Set due date
     init                          Initialize todomd directory
     archive                       Archive completed tasks
