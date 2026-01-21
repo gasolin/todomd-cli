@@ -34,6 +34,7 @@ A command-line tool for managing todomd format files, inspired by todo.txt-cli b
 - [x] `context, ctx <id> <context>` - Add a context to a task
 - [x] `due <id> <date>` - Set a due date for a task
 - [x] `archive` - Move completed tasks to done.md
+- [x] `--json` - Output raw JSON for machine readability
 
 ## Installation
 
@@ -149,6 +150,7 @@ todomd path/to/a/project/
 - `todomd project, proj <id> <project>` - Add project to task
 - `todomd context, ctx <id> <context>` - Add context to task
 - `todomd due <id> <date>` - Set due date. Accepts `YYYY-MM-DD` and natural language like `today`, `tomorrow`, `friday` (next upcoming), `this friday` (within this week), `next friday` (in the following week), or `in 2 weeks` (English only).
+- `todomd --json` - Output raw JSON (can be used with any command).
 
 ### Setup
 
@@ -209,6 +211,9 @@ todomd done 1
 
 # Add context to existing task
 todomd context 2 home
+
+# Get JSON output for automation
+todomd list --json
 ```
 
 ## File Structure

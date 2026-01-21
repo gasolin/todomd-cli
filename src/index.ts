@@ -8,6 +8,7 @@ import os from 'os'
 import App from './components/App.js'
 import { pathToFileURL } from 'url'
 import { ValidCommands } from './types/Commands.js'
+import { Commander } from './lib/Commander.js'
 
 // Load environment variables
 dotenv.config({ quiet: true })
@@ -40,6 +41,7 @@ const cli = meow(
   Options
     --file, -f                    Specify todomd file (default: todo.md)
     --done-file                   Specify done file (default: done.md)
+    --json                        Output raw JSON (for list commands)
     --help                        Show help
     --version                     Show version
 
@@ -55,6 +57,7 @@ const cli = meow(
     flags: {
       file: { type: 'string', shortFlag: 'f' },
       doneFile: { type: 'string' },
+      json: { type: 'boolean' },
       help: { type: 'boolean', shortFlag: 'h' }
     }
   } as any
@@ -63,11 +66,39 @@ const cli = meow(
 const todoDir = process.env.TODOMD_DIR || path.join(os.homedir(), '.todomd')
 
 async function run() {
+  const command = cli.input[0] || ValidCommands.List
+  const args = cli.input.slice(1)
+
+  if (cli.flags.json) {
+    const commander = new Commander(
+      todoDir,
+      cli.flags.file as string,
+      cli.flags.doneFile as string
+    )
+    try {
+      const result = await commander.run(command, args)
+      console.log(JSON.stringify(result, null, 2))
+    } catch (err) {
+      console.error(
+        JSON.stringify(
+          {
+            error:
+              err instanceof Error ? err.message : 'An unknown error occurred'
+          },
+          null,
+          2
+        )
+      )
+      process.exit(1)
+    }
+    return
+  }
+
   const { render } = await import('ink')
   render(
     React.createElement(App, {
-      command: cli.input[0] || ValidCommands.List,
-      args: cli.input.slice(1),
+      command: command,
+      args: args,
       flags: cli.flags,
       todoDir: todoDir
     }),
