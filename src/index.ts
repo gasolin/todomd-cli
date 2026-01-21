@@ -75,7 +75,8 @@ async function run() {
     await serve(
       todoDir,
       cli.flags.file as string,
-      cli.flags.doneFile as string
+      cli.flags.doneFile as string,
+      cli.pkg.version
     )
     return
   }

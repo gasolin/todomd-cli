@@ -11,12 +11,13 @@ import { isNearDue } from "../lib/DueDate.js";
 export const serve = async (
     todoDir: string,
     todoFile?: string,
-    doneFile?: string
+    doneFile?: string,
+    version: string = "1.0.0"
 ) => {
     const commander = new Commander(todoDir, todoFile, doneFile);
 
     const server = new Server(
-        { name: "todomd-cli", version: "0.10.3" },
+        { name: "todomd", version },
         { capabilities: { tools: {} } }
     );
 
