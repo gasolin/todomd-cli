@@ -1,6 +1,6 @@
 {
   "name": "@gasolin/todomd-cli",
-  "version": "0.10.3",
+  "version": "1.0.0",
   "description": "A command-line tool for managing todomd format files with MCP support",
   "main": "dist/src/index.js",
   "bin": {
