@@ -5,10 +5,10 @@ import meow from 'meow'
 import dotenv from 'dotenv'
 import path from 'path'
 import os from 'os'
-import App from './components/App.js'
+import App from './ui/App.js'
 import { pathToFileURL } from 'url'
 import { ValidCommands } from './types/Commands.js'
-import { Commander } from './lib/Commander.js'
+import { Commander } from './commands/Commander.js'
 
 // Load environment variables
 dotenv.config({ quiet: true })

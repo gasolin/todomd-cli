@@ -1,13 +1,13 @@
-import { TodoManager } from './TodoManager'
+import { TodoManager } from '../lib/TodoManager'
 import { Task, Status } from '../types/Task'
 import { ValidCommands } from '../types/Commands'
-import { getListTasks } from './TaskLister'
+import { getListTasks } from '../lib/TaskLister'
 import fs from 'fs/promises'
 import path from 'path'
 import { format } from 'date-fns'
 
-import { getDueDate } from './DueDate'
-import { runScript } from './runScript'
+import { getDueDate } from '../lib/DueDate'
+import { runScript } from '../lib/runScript'
 
 export class Commander {
   private todoDir: string

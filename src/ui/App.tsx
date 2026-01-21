@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Commander } from '../lib/Commander'
+import { Commander } from '../commands/Commander'
 import { Task, Status } from '../types/Task'
 import { ValidCommands } from '../types/Commands'
 import { parseISO, isPast, differenceInDays } from 'date-fns'
