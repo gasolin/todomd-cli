@@ -261,6 +261,22 @@ Add the following to your MCP configuration (e.g., `~/Library/Application Suppor
 }
 ```
 
+Alternatively, you can use `npx` to run it without global installation:
+
+```json
+{
+  "mcpServers": {
+    "todomd": {
+      "command": "npx",
+      "args": ["-y", "@gasolin/todomd-cli", "serve"],
+      "env": {
+        "TODOMD_DIR": "/path/to/your/todos"
+      }
+    }
+  }
+}
+```
+
 Only `TODOMD_DIR` is required (if you don't want to use the default `~/.todomd`). The other environment variables (`TODOMD_WHEN_DONE`, `TODOMD_JOURNAL_PATH`, `TODOMD_NEAR_DAYS`) are **optional** and provide additional features.
 
 ## Development
