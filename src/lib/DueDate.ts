@@ -6,7 +6,8 @@ import {
   nextDay,
   parseISO,
   Day,
-  setDay
+  setDay,
+  differenceInDays
 } from 'date-fns'
 
 const dayMap: Record<string, Day> = {
@@ -69,4 +70,14 @@ export function getDueDate(dateArg: string): Date | null {
   }
 
   return dueDate
+}
+
+export function isNearDue(dueDate: string): boolean {
+  const nearDays = parseInt(process.env.TODOMD_NEAR_DAYS || '2', 10)
+  try {
+    const date = parseISO(dueDate)
+    return differenceInDays(date, new Date()) <= nearDays
+  } catch (e) {
+    return false
+  }
 }

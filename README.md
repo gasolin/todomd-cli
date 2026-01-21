@@ -34,6 +34,7 @@ A command-line tool for managing todomd format files, inspired by todo.txt-cli b
 - [x] `context, ctx <id> <context>` - Add a context to a task
 - [x] `due <id> <date>` - Set a due date for a task
 - [x] `archive` - Move completed tasks to done.md
+- [x] `serve` - Run as MCP (Model Context Protocol) server
 - [x] `--json` - Output raw JSON for machine readability
 
 ## Installation
@@ -236,6 +237,31 @@ Since TodoMD files are standard Markdown, they work with:
 - Static site generators for publishing
 - LLMs and AI tools for intelligent task management
 - CI/CD pipelines for automated task processing
+
+## MCP (Model Context Protocol) support
+
+You can act `todomd-cli` as an MCP server to integrate with AI tools like Claude Desktop.
+
+Add the following to your MCP configuration (e.g., `~/Library/Application Support/Claude/claude_desktop_config.json` on macOS):
+
+```json
+{
+  "mcpServers": {
+    "todomd": {
+      "command": "todomd",
+      "args": ["serve"],
+      "env": {
+        "TODOMD_DIR": "/path/to/your/todos",
+        "TODOMD_WHEN_DONE": "/path/to/your/tools/append_journal.sh",
+        "TODOMD_JOURNAL_PATH": "/path/to/your/logseq/journals",
+        "TODOMD_NEAR_DAYS": "3"
+      }
+    }
+  }
+}
+```
+
+Only `TODOMD_DIR` is required (if you don't want to use the default `~/.todomd`). The other environment variables (`TODOMD_WHEN_DONE`, `TODOMD_JOURNAL_PATH`, `TODOMD_NEAR_DAYS`) are **optional** and provide additional features.
 
 ## Development
 

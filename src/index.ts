@@ -9,6 +9,7 @@ import App from './ui/App.js'
 import { pathToFileURL } from 'url'
 import { ValidCommands } from './types/Commands.js'
 import { Commander } from './commands/Commander.js'
+import { serve } from './commands/serve.js'
 
 // Load environment variables
 dotenv.config({ quiet: true })
@@ -37,6 +38,7 @@ const cli = meow(
     due <id> <date>               Set due date
     init                          Initialize todomd directory
     archive                       Archive completed tasks
+    serve                         Run as MCP (Model Context Protocol) server
 
   Options
     --file, -f                    Specify todomd file (default: todo.md)
@@ -68,6 +70,15 @@ const todoDir = process.env.TODOMD_DIR || path.join(os.homedir(), '.todomd')
 async function run() {
   const command = cli.input[0] || ValidCommands.List
   const args = cli.input.slice(1)
+
+  if (command === ValidCommands.Serve) {
+    await serve(
+      todoDir,
+      cli.flags.file as string,
+      cli.flags.doneFile as string
+    )
+    return
+  }
 
   if (cli.flags.json) {
     const commander = new Commander(

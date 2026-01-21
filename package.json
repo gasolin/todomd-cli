@@ -1,7 +1,7 @@
 {
   "name": "@gasolin/todomd-cli",
   "version": "0.10.3",
-  "description": "A command-line tool for managing todomd format files",
+  "description": "A command-line tool for managing todomd format files with MCP support",
   "main": "dist/src/index.js",
   "bin": {
     "todomd": "dist/src/index.js"
@@ -22,6 +22,11 @@
     "todomd",
     "markdown",
     "cli",
+    "mcp",
+    "mcp-server",
+    "model-context-protocol",
+    "ai",
+    "llm",
     "task-management"
   ],
   "author": "Fred Lin <gasolin+todomd@gmail.com>",
@@ -35,6 +40,7 @@
     "url": "https://github.com/gasolin/todomd-cli/issues"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.25.3",
     "chalk": "^5.4.1",
     "date-fns": "^4.1.0",
     "dotenv": "^17.2.1",
